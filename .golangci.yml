@@ -1,0 +1,56 @@
+run:
+  go: "1.22"
+  deadline: 2m
+  build-tags:
+    - mock
+    - integration
+linters:
+  enable-all: true
+  disable:
+    - varnamelen
+    - tagalign
+    - paralleltest
+    - ireturn
+    - godox
+    - unused
+    - gomoddirectives
+    - execinquery
+    - gomnd
+linters-settings:
+  misspell:
+    locale: US
+  gci:
+    sections:
+      - Standard
+      - Default
+  lll:
+    line-length: 140
+  exhaustruct:
+    exclude:
+      - '.*cobra\.Command.*'
+  depguard:
+    rules:
+      main:
+        allow:
+          - $gostd
+          - github.com
+        deny:
+          - pkg: "emperror.dev/errors"
+            desc: should be replaced by "github.com/pkg/errors"
+issues:
+  exclude-files:
+    - "init.go"
+    - "_test.go"
+  exclude-rules:
+    - linters:
+        - lll
+      source: "^//go:generate "
+    - path: "internal/build/healthcheck.go"
+      linters:
+        - unused
+    - path: "internal/build/shutdown.go"
+      linters:
+        - unused
+    - path: "cmd" # drop this after migration to 1.54
+      linters:
+        - nolintlint

@@ -1,0 +1,6 @@
+.*
+/bin/
+
+!/.gitignore
+!/.gitattributes
+!/.golangci.yml
