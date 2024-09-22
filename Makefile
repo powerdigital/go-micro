@@ -12,10 +12,8 @@ build-binary: ## build a binary
 run-rest:
 	make build-binary && ./bin/app rest
 
-# Запуск всех тестов
 test:
 	go test -tags mock,integration -race -cover ./...
 
-# Запуск всех тестов с выключенным кешированием результата
 test-no-cache:
 	go test -tags mock,integration -race -cover -count=1 ./...

@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	badJSONRequestFormat = "Некорректный JSON в сообщении"
-	resultGettingError   = "Не удалось получить результат"
+	badJSONRequestFormat = "Invalid JSON message"
+	resultGettingError   = "Result getting failed"
 )
 
 type helloRequestMsg struct {
