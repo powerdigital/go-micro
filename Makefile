@@ -9,6 +9,9 @@ TAGS =
 build-binary: ## build a binary
 	go build -tags '${TAGS}' ${LDFLAGS} -o bin/app
 
+run-rest:
+	make build-binary && ./bin/app rest
+
 # Запуск всех тестов
 test:
 	go test -tags mock,integration -race -cover ./...

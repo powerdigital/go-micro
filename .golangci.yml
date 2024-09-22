@@ -51,6 +51,3 @@ issues:
     - path: "internal/build/shutdown.go"
       linters:
         - unused
-    - path:
-      linters:
-        - nolintlint

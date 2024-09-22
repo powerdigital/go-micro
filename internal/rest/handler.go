@@ -54,6 +54,8 @@ func (h Handler) GetHello(res http.ResponseWriter, req *http.Request) {
 
 	result, err := h.service.GetHello(requestMsg.Name)
 	if err != nil {
+		zerolog.Ctx(req.Context()).Err(err).Msg("get hello request")
+
 		h.handleBadRequestError(req.Context(), res, resultGettingError)
 
 		return

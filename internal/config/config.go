@@ -11,8 +11,9 @@ import (
 )
 
 type Config struct {
-	App  App
-	HTTP HTTP
+	App        App
+	HTTP       HTTP
+	Monitoring Monitoring
 }
 
 type App struct {
@@ -24,6 +25,10 @@ type App struct {
 type HTTP struct {
 	Port    int32    `default:"8080" envconfig:"HTTP_PORT"`
 	Schemes []string `default:"http" envconfig:"HTTP_SCHEMES"`
+}
+
+type Monitoring struct {
+	SentryDSN string `envconfig:"SENTRY_DSN"`
 }
 
 func Load() (Config, error) {

@@ -8,11 +8,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// nolint:revive
 func Run(ctx context.Context, conf config.Config) error {
-	root := &cobra.Command{ //nolint:exhaustruct
-		RunE: func(cmd *cobra.Command, args []string) error {
-			//nolint:wrapcheck
+	root := &cobra.Command{
+		RunE: func(cmd *cobra.Command, args []string) error { //nolint:revive
 			return cmd.Usage()
 		},
 	}

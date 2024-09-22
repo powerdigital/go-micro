@@ -4,3 +4,4 @@
 !/.gitignore
 !/.gitattributes
 !/.golangci.yml
+!/.env.example

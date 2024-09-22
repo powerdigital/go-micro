@@ -11,12 +11,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//nolint:dupl,revive
 func httpServer(ctx context.Context, conf config.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "rest",
 		Short: "start rest server",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, args []string) error { //nolint:revive
 			builder := build.New(conf)
 			ctx, cancel := context.WithCancel(ctx)
 			defer cancel()

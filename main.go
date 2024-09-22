@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/powerdigital/go-micro/cmd"
+	"github.com/powerdigital/go-micro/internal/build"
 	"github.com/powerdigital/go-micro/internal/config"
-	"github.com/rs/zerolog"
 )
 
 func main() {
@@ -20,7 +20,13 @@ func main() {
 		panic(err)
 	}
 
-	log := zerolog.New(os.Stdout).Level(logLevel)
+	sentryWriter := build.SentryWriter(conf.Monitoring.SentryDSN)
+	log := build.NewLogger(os.Stdout, sentryWriter).
+		Level(logLevel).
+		With().
+		Timestamp().
+		Caller().
+		Logger()
 
 	ctx := log.WithContext(context.Background())
 
