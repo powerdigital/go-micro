@@ -1,8 +1,10 @@
-package service
+package v1
 
-import "github.com/pkg/errors"
+import (
+	"github.com/pkg/errors"
+)
 
-type Service interface {
+type GreetingService interface {
 	GetHello(name string) (string, error)
 }
 

@@ -6,8 +6,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/powerdigital/go-micro/internal/service"
 	"github.com/rs/zerolog"
+
+	servicev1 "github.com/powerdigital/go-micro/internal/service/v1"
 )
 
 const (
@@ -28,10 +29,10 @@ type errResponse struct {
 }
 
 type Handler struct {
-	service service.Service
+	service servicev1.GreetingService
 }
 
-func NewHandler(service service.Service) Handler {
+func NewHandler(service servicev1.GreetingService) Handler {
 	return Handler{
 		service: service,
 	}

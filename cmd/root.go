@@ -4,8 +4,9 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
-	"github.com/powerdigital/go-micro/internal/config"
 	"github.com/spf13/cobra"
+
+	"github.com/powerdigital/go-micro/internal/config"
 )
 
 func Run(ctx context.Context, conf config.Config) error {
@@ -17,6 +18,7 @@ func Run(ctx context.Context, conf config.Config) error {
 
 	root.AddCommand(
 		httpServer(ctx, conf),
+		grpcServer(ctx, conf),
 	)
 
 	return errors.Wrap(root.ExecuteContext(ctx), "run application")

@@ -1,10 +1,12 @@
 package build
 
-import "github.com/powerdigital/go-micro/internal/service"
+import (
+	v1 "github.com/powerdigital/go-micro/internal/service/v1"
+)
 
-func (b *Builder) Service() (service.Service, error) {
+func (b *Builder) GreetingService() (v1.GreetingService, error) {
 	if b.service == nil {
-		b.service = service.NewService()
+		b.service = v1.NewService()
 	}
 
 	return b.service, nil

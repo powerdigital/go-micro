@@ -9,8 +9,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
-	"github.com/powerdigital/go-micro/internal/rest"
 	"github.com/rs/zerolog"
+
+	"github.com/powerdigital/go-micro/internal/rest"
 )
 
 func (b *Builder) HTTPServer(ctx context.Context) (*http.Server, error) {
@@ -51,7 +52,7 @@ func (b *Builder) httpRouter() *mux.Router {
 func (b *Builder) SetHTTPHandlers() error {
 	router := b.httpRouter()
 
-	service, err := b.Service()
+	service, err := b.GreetingService()
 	if err != nil {
 		return errors.Wrap(err, "get service")
 	}

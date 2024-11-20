@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package hello.v1;
+
+option go_package = "hello/v1;hellov1";
+
+import "google/protobuf/empty.proto";
+
+service Greeter {
+  rpc GetHello (HelloRequest) returns (HelloResponse);
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloResponse {
+  string message = 1;
+}

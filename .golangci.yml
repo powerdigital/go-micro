@@ -23,6 +23,7 @@ linters-settings:
     sections:
       - Standard
       - Default
+      - Prefix(github.com/powerdigital)
   lll:
     line-length: 140
   exhaustruct:

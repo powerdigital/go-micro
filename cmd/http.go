@@ -5,10 +5,11 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	"github.com/powerdigital/go-micro/internal/build"
-	"github.com/powerdigital/go-micro/internal/config"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+
+	"github.com/powerdigital/go-micro/internal/build"
+	"github.com/powerdigital/go-micro/internal/config"
 )
 
 func httpServer(ctx context.Context, conf config.Config) *cobra.Command {

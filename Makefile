@@ -9,11 +9,22 @@ TAGS =
 build-binary: ## build a binary
 	go build -tags '${TAGS}' ${LDFLAGS} -o bin/app
 
-run-rest:
+run-rest-server:
 	make build-binary && ./bin/app rest
+run-grpc-server:
+	make build-binary && ./bin/app grpc
+
+# Generate gRPC server using proto files
+# Requires installed buf (https://buf.build/docs/installation)
+gen-grpc:
+	${UTILS_COMMAND} buf generate -v --template api/buf.gen.yaml api/grpc
+
+# Proto specifications validation
+# Requires installed buf (https://buf.build/docs/installation)
+lint-grpc:
+	${UTILS_COMMAND} buf lint api/grpc
 
 test:
 	go test -tags mock,integration -race -cover ./...
-
 test-no-cache:
 	go test -tags mock,integration -race -cover -count=1 ./...

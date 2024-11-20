@@ -13,6 +13,7 @@ import (
 type Config struct {
 	App        App
 	HTTP       HTTP
+	GRPC       GRPC
 	Monitoring Monitoring
 }
 
