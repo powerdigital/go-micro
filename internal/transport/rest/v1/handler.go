@@ -28,17 +28,17 @@ type errResponse struct {
 	Error string `json:"error"`
 }
 
-type Handler struct {
+type RESTHandler struct {
 	service servicev1.GreetingService
 }
 
-func NewHandler(service servicev1.GreetingService) Handler {
-	return Handler{
+func NewRESTHandler(service servicev1.GreetingService) RESTHandler {
+	return RESTHandler{
 		service: service,
 	}
 }
 
-func (h Handler) GetHello(res http.ResponseWriter, req *http.Request) {
+func (h RESTHandler) GetHello(res http.ResponseWriter, req *http.Request) {
 	jsonRaw, err := io.ReadAll(req.Body)
 	if err != nil {
 		zerolog.Ctx(req.Context()).Err(err).Msg("get request")
@@ -74,7 +74,7 @@ func (h Handler) GetHello(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (h Handler) handleBadRequestError(ctx context.Context, res http.ResponseWriter, errorMessage string) {
+func (h RESTHandler) handleBadRequestError(ctx context.Context, res http.ResponseWriter, errorMessage string) {
 	res.Header().Add("Content-Type", "application/json")
 	res.WriteHeader(http.StatusBadRequest)
 

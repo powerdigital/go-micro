@@ -29,11 +29,11 @@ func (b *Builder) GRPCServer() (*grpc.Server, error) {
 	return grpcServer, nil
 }
 
-func (b *Builder) GreetingServer() (*grpcv1.GreetingServer, error) {
+func (b *Builder) GreetingServer() (*grpcv1.GRPCHandler, error) {
 	service, err := b.GreetingService()
 	if err != nil {
 		return nil, errors.Wrap(err, "build service")
 	}
 
-	return grpcv1.NewGreetingServer(service), nil
+	return grpcv1.NewGRPCHandler(service), nil
 }

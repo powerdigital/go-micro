@@ -59,7 +59,7 @@ func (b *Builder) SetHTTPHandlers() error {
 		return errors.Wrap(err, "get service")
 	}
 
-	handler := restv1.NewHandler(service)
+	handler := restv1.NewRESTHandler(service)
 
 	router.HandleFunc("/", handler.GetHello)
 

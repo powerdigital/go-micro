@@ -13,19 +13,19 @@ type ServerGreetingService interface {
 	servicev1.GreetingService
 }
 
-type GreetingServer struct {
+type GRPCHandler struct {
 	service ServerGreetingService
 	pbgreeterv1.UnimplementedGreeterServer
 }
 
-func NewGreetingServer(service servicev1.GreetingService) *GreetingServer {
+func NewGRPCHandler(service servicev1.GreetingService) *GRPCHandler {
 	//nolint:exhaustruct
-	return &GreetingServer{
+	return &GRPCHandler{
 		service: service,
 	}
 }
 
-func (s *GreetingServer) GetHello(
+func (s *GRPCHandler) GetHello(
 	_ context.Context,
 	req *pbgreeterv1.HelloRequest,
 ) (*pbgreeterv1.HelloResponse, error) {
