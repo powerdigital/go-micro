@@ -15,28 +15,30 @@ import (
 )
 
 func (b *Builder) HTTPServer(ctx context.Context) (*http.Server, error) {
-	const timeout = time.Millisecond * 25
+	if b.http.server == nil {
+		const timeout = time.Millisecond * 25
 
-	router := b.httpRouter()
+		router := b.httpRouter()
 
-	router.HandleFunc(readinessEndpoint, b.healthcheck.handler)
+		router.HandleFunc(readinessEndpoint, b.healthcheck.handler)
 
-	//nolint:exhaustruct
-	server := http.Server{
-		Addr:              b.config.HTTPAddr(),
-		ReadHeaderTimeout: timeout,
-		Handler:           router,
-		ErrorLog:          log.New(zerolog.Nop(), "", 0),
-		BaseContext: func(net.Listener) context.Context {
-			return ctx
-		},
+		//nolint:exhaustruct
+		server := http.Server{
+			Addr:              b.config.HTTPAddr(),
+			ReadHeaderTimeout: timeout,
+			Handler:           router,
+			ErrorLog:          log.New(zerolog.Nop(), "", 0),
+			BaseContext: func(net.Listener) context.Context {
+				return ctx
+			},
+		}
+
+		b.shutdown.add(func(ctx context.Context) error {
+			return errors.Wrap(server.Shutdown(ctx), "shutdown http server")
+		})
 	}
 
-	b.shutdown.add(func(ctx context.Context) error {
-		return errors.Wrap(server.Shutdown(ctx), "shutdown http server")
-	})
-
-	return &server, nil
+	return b.http.server, nil
 }
 
 func (b *Builder) httpRouter() *mux.Router {
