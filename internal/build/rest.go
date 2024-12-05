@@ -11,7 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 
-	"github.com/powerdigital/go-micro/internal/rest"
+	restv1 "github.com/powerdigital/go-micro/internal/transport/rest/v1"
 )
 
 func (b *Builder) HTTPServer(ctx context.Context) (*http.Server, error) {
@@ -57,7 +57,7 @@ func (b *Builder) SetHTTPHandlers() error {
 		return errors.Wrap(err, "get service")
 	}
 
-	handler := rest.NewHandler(service)
+	handler := restv1.NewHandler(service)
 
 	router.HandleFunc("/", handler.GetHello)
 
