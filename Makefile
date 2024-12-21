@@ -17,7 +17,7 @@ run-grpc-server:
 # Generate gRPC server using proto files
 # Requires installed buf (https://buf.build/docs/installation)
 gen-grpc:
-	${UTILS_COMMAND} buf generate -v --template api/buf.gen.yaml api/grpc
+	${UTILS_COMMAND} buf generate -v --template api/grpc/buf.gen.yaml api/grpc
 
 # Proto specifications validation
 # Requires installed buf (https://buf.build/docs/installation)
