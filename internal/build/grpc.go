@@ -18,7 +18,7 @@ func (b *Builder) GRPCServer() (*grpc.Server, error) {
 		return nil, errors.Wrap(err, "build greeting server")
 	}
 
-	greeterv1.RegisterGreeterServer(grpcServer, greetingServer)
+	greeterv1.RegisterGreeterAPIServer(grpcServer, greetingServer)
 
 	b.shutdown.add(func(_ context.Context) error {
 		grpcServer.GracefulStop()

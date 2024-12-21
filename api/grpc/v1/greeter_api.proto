@@ -4,16 +4,20 @@ package hello.v1;
 
 option go_package = "hello/v1;hellov1";
 
-import "google/protobuf/empty.proto";
-
-service Greeter {
-  rpc GetHello (HelloRequest) returns (HelloResponse);
+// Service for greeting persons
+service GreeterAPI {
+  // Get hello message
+  rpc GetHello (GetHelloRequest) returns (GetHelloResponse);
 }
 
-message HelloRequest {
+// Hello request structure
+message GetHelloRequest {
+  // Greeting persons name
   string name = 1;
 }
 
-message HelloResponse {
+// Hello response structure
+message GetHelloResponse {
+  // Response greeting message
   string message = 1;
 }

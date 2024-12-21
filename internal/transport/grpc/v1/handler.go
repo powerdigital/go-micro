@@ -15,7 +15,7 @@ type ServerGreetingService interface {
 
 type GRPCHandler struct {
 	service ServerGreetingService
-	pbgreeterv1.UnimplementedGreeterServer
+	pbgreeterv1.UnimplementedGreeterAPIServer
 }
 
 func NewGRPCHandler(service servicev1.GreetingService) *GRPCHandler {
@@ -27,8 +27,8 @@ func NewGRPCHandler(service servicev1.GreetingService) *GRPCHandler {
 
 func (s *GRPCHandler) GetHello(
 	_ context.Context,
-	req *pbgreeterv1.HelloRequest,
-) (*pbgreeterv1.HelloResponse, error) {
+	req *pbgreeterv1.GetHelloRequest,
+) (*pbgreeterv1.GetHelloResponse, error) {
 	name := req.GetName()
 
 	hello, err := s.service.GetHello(name)
@@ -36,7 +36,7 @@ func (s *GRPCHandler) GetHello(
 		return nil, errors.Wrap(err, "get hello name")
 	}
 
-	return &pbgreeterv1.HelloResponse{
+	return &pbgreeterv1.GetHelloResponse{
 		Message: hello,
 	}, nil
 }
