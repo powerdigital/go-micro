@@ -9,20 +9,21 @@ TAGS =
 build-binary: ## build a binary
 	go build -tags '${TAGS}' ${LDFLAGS} -o bin/app
 
-run-rest-server:
+run-rest:
 	make build-binary && ./bin/app rest
-run-grpc-server:
+run-grpc:
 	make build-binary && ./bin/app grpc
+run-graphql:
+	make build-binary && ./bin/app graphql
 
-# Generate gRPC server using proto files
-# Requires installed buf (https://buf.build/docs/installation)
 gen-grpc:
 	${UTILS_COMMAND} buf generate -v --template api/grpc/buf.gen.yaml api/grpc
 
-# Proto specifications validation
-# Requires installed buf (https://buf.build/docs/installation)
 lint-grpc:
 	${UTILS_COMMAND} buf lint api/grpc
+
+gen-graphql:
+	${UTILS_COMMAND} go get github.com/99designs/gqlgen@latest && go run github.com/99designs/gqlgen generate --config api/graphql/gqlgen.yml
 
 test:
 	go test -tags mock,integration -race -cover ./...

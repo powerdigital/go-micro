@@ -1,0 +1,25 @@
+schema: api/graphql/v1/schema.graphqls
+exec:
+  filename: ./pkg/graphql/v1/schema_generated.go
+model:
+  filename: ./pkg/graphql/v1/models_generated.go
+resolver:
+  layout: follow-schema
+  dir: pkg/graphql/v1
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+  UUID:
+    model:
+      - github.com/99designs/gqlgen/graphql.UUID
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int32
+  Int64:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64

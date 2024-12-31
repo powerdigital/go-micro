@@ -19,6 +19,7 @@ func Run(ctx context.Context, conf config.Config) error {
 	root.AddCommand(
 		httpServer(ctx, conf),
 		grpcServer(ctx, conf),
+		gqlServer(ctx, conf),
 	)
 
 	return errors.Wrap(root.ExecuteContext(ctx), "run application")

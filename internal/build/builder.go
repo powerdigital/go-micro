@@ -1,8 +1,6 @@
 package build
 
 import (
-	"net/http"
-
 	"github.com/gorilla/mux"
 
 	"github.com/powerdigital/go-micro/internal/config"
@@ -19,7 +17,6 @@ type Builder struct {
 
 	http struct {
 		router *mux.Router
-		server *http.Server
 	}
 }
 
