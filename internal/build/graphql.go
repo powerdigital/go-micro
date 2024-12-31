@@ -1,4 +1,3 @@
-//nolint:exhaustruct
 package build
 
 import (
@@ -8,18 +7,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/handler/extension"
-	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 
-	v1 "github.com/powerdigital/go-micro/internal/service/v1"
-	graphqlv1 "github.com/powerdigital/go-micro/pkg/graphql/v1"
+	graphqlv1 "github.com/powerdigital/go-micro/internal/transport/graphql/v1"
 )
 
 func (b *Builder) GqlServer(ctx context.Context) (*http.Server, error) {
@@ -47,7 +41,7 @@ func (b *Builder) GqlServer(ctx context.Context) (*http.Server, error) {
 	return &server, nil
 }
 
-func (b *Builder) gqlHttpRouter() *mux.Router {
+func (b *Builder) gqlHTTPRouter() *mux.Router {
 	if b.http.router != nil {
 		return b.http.router
 	}
@@ -70,26 +64,9 @@ func (b *Builder) SetGqlHandlers() error {
 		handlers.AllowedMethods([]string{"OPTIONS", "POST", "GET"}),
 	))
 
-	handler := NewGqlHandler()
+	handler := graphqlv1.NewGqlHandler()
 	router.Handle("/query", handler)
 	router.Handle("/playground", playground.Handler("Playground", "/query"))
 
 	return nil
-}
-
-func NewGqlHandler() http.Handler {
-	h := handler.New(graphqlv1.NewExecutableSchema(graphqlv1.Config{
-		Resolvers: graphqlv1.NewResolver(v1.NewService()),
-	}))
-
-	h.AddTransport(transport.GET{})
-	h.AddTransport(transport.POST{})
-	h.AddTransport(transport.MultipartForm{})
-	h.AddTransport(transport.Options{})
-
-	h.SetRecoverFunc(graphql.DefaultRecover)
-
-	h.Use(extension.Introspection{})
-
-	return h
 }
