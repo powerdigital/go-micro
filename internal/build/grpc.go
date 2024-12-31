@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc"
 
 	grpcv1 "github.com/powerdigital/go-micro/internal/transport/grpc/v1"
-	greeterv1 "github.com/powerdigital/go-micro/pkg/greeter/v1"
+	hellov1 "github.com/powerdigital/go-micro/pkg/grpc/v1"
 )
 
 func (b *Builder) GRPCServer() (*grpc.Server, error) {
@@ -18,7 +18,7 @@ func (b *Builder) GRPCServer() (*grpc.Server, error) {
 		return nil, errors.Wrap(err, "build greeting server")
 	}
 
-	greeterv1.RegisterGreeterAPIServer(grpcServer, greetingServer)
+	hellov1.RegisterGreeterAPIServer(grpcServer, greetingServer)
 
 	b.shutdown.add(func(_ context.Context) error {
 		grpcServer.GracefulStop()

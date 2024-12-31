@@ -6,7 +6,7 @@ import (
 	"github.com/pkg/errors"
 
 	servicev1 "github.com/powerdigital/go-micro/internal/service/v1"
-	pbgreeterv1 "github.com/powerdigital/go-micro/pkg/greeter/v1"
+	hellov1 "github.com/powerdigital/go-micro/pkg/grpc/v1"
 )
 
 type ServerGreetingService interface {
@@ -15,7 +15,7 @@ type ServerGreetingService interface {
 
 type GRPCHandler struct {
 	service ServerGreetingService
-	pbgreeterv1.UnimplementedGreeterAPIServer
+	hellov1.UnimplementedGreeterAPIServer
 }
 
 func NewGRPCHandler(service servicev1.GreetingService) *GRPCHandler {
@@ -27,8 +27,8 @@ func NewGRPCHandler(service servicev1.GreetingService) *GRPCHandler {
 
 func (s *GRPCHandler) GetHello(
 	_ context.Context,
-	req *pbgreeterv1.GetHelloRequest,
-) (*pbgreeterv1.GetHelloResponse, error) {
+	req *hellov1.GetHelloRequest,
+) (*hellov1.GetHelloResponse, error) {
 	name := req.GetName()
 
 	hello, err := s.service.GetHello(name)
@@ -36,7 +36,7 @@ func (s *GRPCHandler) GetHello(
 		return nil, errors.Wrap(err, "get hello name")
 	}
 
-	return &pbgreeterv1.GetHelloResponse{
+	return &hellov1.GetHelloResponse{
 		Message: hello,
 	}, nil
 }
