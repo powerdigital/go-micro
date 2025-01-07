@@ -8,7 +8,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 
-	servicev1 "github.com/powerdigital/go-micro/internal/service/v1"
+	servicev1 "github.com/powerdigital/go-micro/internal/service/v1/greeting"
 	graphqlv1 "github.com/powerdigital/go-micro/pkg/graphql/v1"
 )
 

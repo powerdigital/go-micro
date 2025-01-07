@@ -8,7 +8,7 @@ import (
 
 	"github.com/rs/zerolog"
 
-	servicev1 "github.com/powerdigital/go-micro/internal/service/v1"
+	servicev1 "github.com/powerdigital/go-micro/internal/service/v1/greeting"
 )
 
 const (
@@ -29,10 +29,10 @@ type errResponse struct {
 }
 
 type RESTHandler struct {
-	service servicev1.GreetingService
+	service servicev1.HelloService
 }
 
-func NewRESTHandler(service servicev1.GreetingService) RESTHandler {
+func NewRESTHandler(service servicev1.HelloService) RESTHandler {
 	return RESTHandler{
 		service: service,
 	}

@@ -1,10 +1,10 @@
-package v1
+package greeting
 
 import (
 	"github.com/cockroachdb/errors"
 )
 
-type GreetingService interface {
+type HelloService interface {
 	GetHello(name string) (string, error)
 }
 
