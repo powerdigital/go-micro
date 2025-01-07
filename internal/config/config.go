@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cockroachdb/errors"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 )
 

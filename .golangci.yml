@@ -37,7 +37,11 @@ linters-settings:
           - github.com
         deny:
           - pkg: "emperror.dev/errors"
-            desc: should be replaced by "github.com/pkg/errors"
+            desc: should be replaced by "github.com/cockroachdb/errors"
+          - pkg: "github.com/pkg/errors"
+            desc: should be replaced by "github.com/cockroachdb/errors"
+          - pkg: "github.com/uber-go/multierr"
+            desc: should be replaced by "github.com/cockroachdb/errors"
 issues:
   exclude-files:
     - "init.go"

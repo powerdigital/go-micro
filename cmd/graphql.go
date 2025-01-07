@@ -5,7 +5,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/pkg/errors"
+	"github.com/cockroachdb/errors"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 

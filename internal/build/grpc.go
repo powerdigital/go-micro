@@ -3,7 +3,7 @@ package build
 import (
 	"context"
 
-	"github.com/pkg/errors"
+	"github.com/cockroachdb/errors"
 	"google.golang.org/grpc"
 
 	grpcv1 "github.com/powerdigital/go-micro/internal/transport/grpc/v1"

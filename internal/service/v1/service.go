@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"github.com/pkg/errors"
+	"github.com/cockroachdb/errors"
 )
 
 type GreetingService interface {

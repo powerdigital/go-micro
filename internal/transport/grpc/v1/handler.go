@@ -3,7 +3,7 @@ package grpcv1
 import (
 	"context"
 
-	"github.com/pkg/errors"
+	"github.com/cockroachdb/errors"
 
 	servicev1 "github.com/powerdigital/go-micro/internal/service/v1"
 	hellov1 "github.com/powerdigital/go-micro/pkg/grpc/v1"

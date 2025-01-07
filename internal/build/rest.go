@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/cockroachdb/errors"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 
 	restv1 "github.com/powerdigital/go-micro/internal/transport/rest/v1"

@@ -3,7 +3,7 @@ package cmd
 import (
 	"context"
 
-	"github.com/pkg/errors"
+	"github.com/cockroachdb/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/powerdigital/go-micro/internal/config"

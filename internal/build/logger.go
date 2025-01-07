@@ -4,7 +4,7 @@ import (
 	"io"
 
 	sentry "github.com/archdx/zerolog-sentry"
-	"github.com/pkg/errors"
+	"github.com/cockroachdb/errors"
 	"github.com/rs/zerolog"
 )
 

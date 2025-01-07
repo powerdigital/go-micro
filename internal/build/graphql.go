@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/cockroachdb/errors"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 
 	graphqlv1 "github.com/powerdigital/go-micro/internal/transport/graphql/v1"
