@@ -10,7 +10,7 @@ import (
 )
 
 type ServerGreetingService interface {
-	servicev1.HelloService
+	servicev1.HelloSrv
 }
 
 type GRPCHandler struct {
@@ -18,7 +18,7 @@ type GRPCHandler struct {
 	grpcv1.UnimplementedGreeterAPIServer
 }
 
-func NewGRPCHandler(service servicev1.HelloService) *GRPCHandler {
+func NewGRPCHandler(service servicev1.HelloSrv) *GRPCHandler {
 	//nolint:exhaustruct
 	return &GRPCHandler{
 		service: service,

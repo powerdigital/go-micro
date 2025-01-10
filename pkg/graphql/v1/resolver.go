@@ -9,10 +9,10 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	service servicev1.HelloService
+	service servicev1.HelloSrv
 }
 
-func NewResolver(service servicev1.HelloService) *Resolver {
+func NewResolver(service servicev1.HelloSrv) *Resolver {
 	return &Resolver{
 		service: service,
 	}

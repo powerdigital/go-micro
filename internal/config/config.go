@@ -15,6 +15,7 @@ type Config struct {
 	HTTP       HTTP
 	GRPC       GRPC
 	Monitoring Monitoring
+	MySQL      MySQL
 }
 
 type App struct {

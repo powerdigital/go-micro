@@ -1,85 +1,136 @@
 package restv1
 
 import (
-	"context"
 	"encoding/json"
-	"io"
 	"net/http"
+	"strconv"
 
-	"github.com/rs/zerolog"
+	"github.com/gorilla/mux"
 
-	servicev1 "github.com/powerdigital/go-micro/internal/service/v1/greeting"
+	userservice "github.com/powerdigital/go-micro/internal/service/v1/user"
+	"github.com/powerdigital/go-micro/internal/service/v1/user/entity"
 )
-
-const (
-	badJSONRequestFormat = "Invalid JSON message"
-	resultGettingError   = "Result getting failed"
-)
-
-type helloRequestMsg struct {
-	Name string `json:"name"`
-}
-
-type helloResponseMsg struct {
-	HelloName string `json:"name"`
-}
-
-type errResponse struct {
-	Error string `json:"error"`
-}
 
 type RESTHandler struct {
-	service servicev1.HelloService
+	userService userservice.UserSrv
 }
 
-func NewRESTHandler(service servicev1.HelloService) RESTHandler {
-	return RESTHandler{
-		service: service,
+func NewRESTHandler(userService userservice.UserSrv) *RESTHandler {
+	return &RESTHandler{
+		userService: userService,
 	}
 }
 
-func (h RESTHandler) GetHello(res http.ResponseWriter, req *http.Request) {
-	jsonRaw, err := io.ReadAll(req.Body)
+func (h *RESTHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.userService.GetUsers(r.Context())
 	if err != nil {
-		zerolog.Ctx(req.Context()).Err(err).Msg("get request")
+		http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
 
 		return
 	}
 
-	var requestMsg helloRequestMsg
-	if err := json.Unmarshal(jsonRaw, &requestMsg); err != nil {
-		h.handleBadRequestError(req.Context(), res, badJSONRequestFormat)
+	w.Header().Set("Content-Type", "application/json")
+
+	if err := json.NewEncoder(w).Encode(users); err != nil {
+		http.Error(w, "Failed to encode users to JSON", http.StatusInternalServerError)
 
 		return
-	}
-
-	result, err := h.service.GetHello(requestMsg.Name)
-	if err != nil {
-		zerolog.Ctx(req.Context()).Err(err).Msg("get hello request")
-
-		h.handleBadRequestError(req.Context(), res, resultGettingError)
-
-		return
-	}
-
-	res.Header().Add("Content-Type", "application/json")
-	res.WriteHeader(http.StatusOK)
-
-	responseMsg := helloResponseMsg{
-		HelloName: result,
-	}
-
-	if err := json.NewEncoder(res).Encode(responseMsg); err != nil {
-		zerolog.Ctx(req.Context()).Err(err).Msg("encode reserve period")
 	}
 }
 
-func (h RESTHandler) handleBadRequestError(ctx context.Context, res http.ResponseWriter, errorMessage string) {
-	res.Header().Add("Content-Type", "application/json")
-	res.WriteHeader(http.StatusBadRequest)
+func (h *RESTHandler) GetUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 
-	errResponse := errResponse{Error: errorMessage}
-	if err := json.NewEncoder(res).Encode(errResponse); err != nil {
-		zerolog.Ctx(ctx).Err(err).Msg("encode reserve period")
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+
+		return
 	}
+
+	user, err := h.userService.GetUser(r.Context(), int64(id))
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	if err := json.NewEncoder(w).Encode(user); err != nil {
+		http.Error(w, "Failed to encode users to JSON", http.StatusInternalServerError)
+
+		return
+	}
+}
+
+func (h *RESTHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+	var user entity.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+
+		return
+	}
+
+	id, err := h.userService.CreateUser(r.Context(), user)
+	if err != nil {
+		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+
+	if err := json.NewEncoder(w).Encode(id); err != nil {
+		http.Error(w, "Failed to encode users to JSON", http.StatusInternalServerError)
+
+		return
+	}
+}
+
+func (h *RESTHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+
+		return
+	}
+
+	var user entity.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+
+		return
+	}
+
+	user.ID = int64(id)
+	if err := h.userService.UpdateUser(r.Context(), user); err != nil {
+		http.Error(w, "Failed to update user", http.StatusInternalServerError)
+
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *RESTHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+
+		return
+	}
+
+	if err := h.userService.DeleteUser(r.Context(), int64(id)); err != nil {
+		http.Error(w, "Failed to delete user", http.StatusInternalServerError)
+
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

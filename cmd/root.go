@@ -17,7 +17,7 @@ func Run(ctx context.Context, conf config.Config) error {
 	}
 
 	root.AddCommand(
-		httpServer(ctx, conf),
+		restServer(ctx, conf),
 		grpcServer(ctx, conf),
 		gqlServer(ctx, conf),
 	)

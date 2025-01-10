@@ -32,7 +32,7 @@ func (b *Builder) GRPCServer() (*grpc.Server, error) {
 func (b *Builder) GreetingServer() (*grpcv1.GRPCHandler, error) {
 	service, err := b.GreetingService()
 	if err != nil {
-		return nil, errors.Wrap(err, "build service")
+		return nil, errors.Wrap(err, "build GreetingService")
 	}
 
 	return grpcv1.NewGRPCHandler(service), nil

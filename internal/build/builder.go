@@ -4,13 +4,15 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/powerdigital/go-micro/internal/config"
-	servicev1 "github.com/powerdigital/go-micro/internal/service/v1/greeting"
+	greetingservice "github.com/powerdigital/go-micro/internal/service/v1/greeting"
+	userservice "github.com/powerdigital/go-micro/internal/service/v1/user"
 )
 
 type Builder struct {
 	config config.Config
 
-	service servicev1.HelloService
+	greetingService greetingservice.HelloSrv
+	userService     userservice.UserSrv
 
 	shutdown    shutdown
 	healthcheck healthcheck

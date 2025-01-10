@@ -52,14 +52,18 @@ func (b *Builder) httpRouter() *mux.Router {
 func (b *Builder) SetHTTPHandlers() error {
 	router := b.httpRouter()
 
-	service, err := b.GreetingService()
+	service, err := b.UserService()
 	if err != nil {
-		return errors.Wrap(err, "get service")
+		return errors.Wrap(err, "get UserService")
 	}
 
 	handler := restv1.NewRESTHandler(service)
 
-	router.HandleFunc("/", handler.GetHello)
+	router.HandleFunc("/users", handler.GetUsers).Methods("GET")
+	router.HandleFunc("/users/{id}", handler.GetUser).Methods("GET")
+	router.HandleFunc("/users", handler.CreateUser).Methods("POST")
+	router.HandleFunc("/users/{id}", handler.UpdateUser).Methods("PUT")
+	router.HandleFunc("/users/{id}", handler.DeleteUser).Methods("DELETE")
 
 	return nil
 }

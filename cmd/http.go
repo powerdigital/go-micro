@@ -13,7 +13,7 @@ import (
 	"github.com/powerdigital/go-micro/internal/config"
 )
 
-func httpServer(ctx context.Context, conf config.Config) *cobra.Command {
+func restServer(ctx context.Context, conf config.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "rest",
 		Short: "start rest server",

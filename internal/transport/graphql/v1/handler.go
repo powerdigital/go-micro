@@ -15,7 +15,7 @@ import (
 //nolint:exhaustruct
 func NewGqlHandler() http.Handler {
 	h := handler.New(graphqlv1.NewExecutableSchema(graphqlv1.Config{
-		Resolvers: graphqlv1.NewResolver(servicev1.NewService()),
+		Resolvers: graphqlv1.NewResolver(servicev1.NewHelloService()),
 	}))
 
 	h.AddTransport(transport.GET{})

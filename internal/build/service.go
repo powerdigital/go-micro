@@ -1,13 +1,30 @@
 package build
 
 import (
-	servicev1 "github.com/powerdigital/go-micro/internal/service/v1/greeting"
+	helloservice "github.com/powerdigital/go-micro/internal/service/v1/greeting"
+	userservice "github.com/powerdigital/go-micro/internal/service/v1/user"
+	"github.com/powerdigital/go-micro/internal/service/v1/user/storage/mysql"
 )
 
-func (b *Builder) GreetingService() (servicev1.HelloService, error) {
-	if b.service == nil {
-		b.service = servicev1.NewService()
+func (b *Builder) GreetingService() (helloservice.HelloSrv, error) {
+	if b.greetingService == nil {
+		b.greetingService = helloservice.NewHelloService()
 	}
 
-	return b.service, nil
+	return b.greetingService, nil
+}
+
+func (b *Builder) UserService() (userservice.UserSrv, error) {
+	if b.userService == nil {
+		db, err := NewMySQLConnection(b.config)
+		if err != nil {
+			return nil, err
+		}
+
+		repo := mysql.NewUserRepo(db)
+
+		b.userService = userservice.NewUserService(repo)
+	}
+
+	return b.userService, nil
 }

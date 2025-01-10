@@ -4,20 +4,19 @@ import (
 	"github.com/cockroachdb/errors"
 )
 
-type HelloService interface {
+type HelloSrv interface {
 	GetHello(name string) (string, error)
 }
 
-type service struct{}
+type HelloService struct{}
 
-//nolint:revive
-func NewService() *service {
-	return &service{}
+func NewHelloService() *HelloService {
+	return &HelloService{}
 }
 
-func (s *service) GetHello(name string) (string, error) {
+func (s *HelloService) GetHello(name string) (string, error) {
 	if len(name) == 0 {
-		return "", errors.New("the name provided to service is empty")
+		return "", errors.New("the name provided to the HelloService is empty")
 	}
 
 	return "Hello, " + name, nil
