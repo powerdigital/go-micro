@@ -21,17 +21,25 @@ func NewRESTHandler(userService userservice.UserSrv) *RESTHandler {
 	}
 }
 
-func (h *RESTHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := h.userService.GetUsers(r.Context())
+func (h *RESTHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+	var user entity.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+
+		return
+	}
+
+	id, err := h.userService.CreateUser(r.Context(), user)
 	if err != nil {
-		http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
+		http.Error(w, "Failed to create user", http.StatusInternalServerError)
 
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 
-	if err := json.NewEncoder(w).Encode(users); err != nil {
+	if err := json.NewEncoder(w).Encode(id); err != nil {
 		http.Error(w, "Failed to encode users to JSON", http.StatusInternalServerError)
 
 		return
@@ -64,25 +72,17 @@ func (h *RESTHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *RESTHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	var user entity.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
-
-		return
-	}
-
-	id, err := h.userService.CreateUser(r.Context(), user)
+func (h *RESTHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.userService.GetUsers(r.Context())
 	if err != nil {
-		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+		http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
 
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
 
-	if err := json.NewEncoder(w).Encode(id); err != nil {
+	if err := json.NewEncoder(w).Encode(users); err != nil {
 		http.Error(w, "Failed to encode users to JSON", http.StatusInternalServerError)
 
 		return

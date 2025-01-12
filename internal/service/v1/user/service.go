@@ -7,7 +7,6 @@ import (
 
 	"github.com/powerdigital/go-micro/internal/service/v1/user/entity"
 	"github.com/powerdigital/go-micro/internal/service/v1/user/storage/mysql"
-	"github.com/powerdigital/go-micro/internal/service/v1/user/storage/mysql/converter"
 )
 
 type UserSrv interface {
@@ -41,7 +40,7 @@ func (s *UserService) GetUser(ctx context.Context, userID int64) (entity.User, e
 		return entity.User{}, errors.Wrap(err, "user not found")
 	}
 
-	return converter.ModelToEntity(userModel), nil
+	return entity.ModelToEntity(userModel), nil
 }
 
 func (s *UserService) GetUsers(ctx context.Context) ([]entity.User, error) {
@@ -52,7 +51,7 @@ func (s *UserService) GetUsers(ctx context.Context) ([]entity.User, error) {
 
 	users := make([]entity.User, len(userModels))
 	for i, userModel := range userModels {
-		users[i] = converter.ModelToEntity(&userModel)
+		users[i] = entity.ModelToEntity(&userModel)
 	}
 
 	return users, nil

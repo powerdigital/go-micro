@@ -16,9 +16,16 @@ run-grpc:
 run-graphql:
 	make build-binary && ./bin/app graphql
 
+up:
+	docker compose -f .docker/docker-compose.yml up -d
+down:
+	docker compose -f .docker/docker-compose.yml down --remove-orphans
+
+lint:
+	golangci-lint run -v
+
 gen-grpc:
 	${UTILS_COMMAND} buf generate -v --template api/grpc/buf.gen.yaml api/grpc
-
 lint-grpc:
 	${UTILS_COMMAND} buf lint api/grpc
 
@@ -26,6 +33,6 @@ gen-graphql:
 	${UTILS_COMMAND} go get github.com/99designs/gqlgen@latest && go run github.com/99designs/gqlgen generate --config api/graphql/gqlgen.yml
 
 test:
-	go test -tags mock,integration -race -cover ./...
+	CGO_ENABLED=1 go test -tags mock,integration -race -cover ./...
 test-no-cache:
-	go test -tags mock,integration -race -cover -count=1 ./...
+	CGO_ENABLED=1 go test -tags mock,integration -race -cover -count=1 ./...

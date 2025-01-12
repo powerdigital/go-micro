@@ -19,3 +19,13 @@ func (u User) EntityToModel() model.User {
 		Age:   u.Age,
 	}
 }
+
+func ModelToEntity(u *model.User) User {
+	return User{
+		ID:    u.ID,
+		Name:  u.Name,
+		Email: u.Email,
+		Phone: u.Phone,
+		Age:   u.Age,
+	}
+}
