@@ -16,7 +16,7 @@ import (
 func gqlServer(ctx context.Context, conf config.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "graphql",
-		Short: "start GraphQL server",
+		Short: "start graphql server",
 		RunE: func(cmd *cobra.Command, args []string) error { //nolint:revive
 			builder := build.New(conf)
 			ctx, cancel := context.WithCancel(ctx)

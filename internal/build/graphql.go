@@ -35,7 +35,7 @@ func (b *Builder) GqlServer(ctx context.Context) (*http.Server, error) {
 	}
 
 	b.shutdown.add(func(ctx context.Context) error {
-		return errors.Wrap(server.Shutdown(ctx), "shutdown GraphQL server")
+		return errors.Wrap(server.Shutdown(ctx), "shutdown graphql server")
 	})
 
 	return &server, nil
