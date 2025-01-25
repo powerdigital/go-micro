@@ -49,10 +49,10 @@ func (b *Builder) httpRouter() *mux.Router {
 	return b.http.router
 }
 
-func (b *Builder) SetHTTPHandlers() error {
+func (b *Builder) SetHTTPHandlers(ctx context.Context) error {
 	router := b.httpRouter()
 
-	service, err := b.UserService()
+	service, err := b.UserService(ctx)
 	if err != nil {
 		return errors.Wrap(err, "get UserService")
 	}

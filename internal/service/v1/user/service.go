@@ -6,7 +6,7 @@ import (
 	"github.com/cockroachdb/errors"
 
 	"github.com/powerdigital/go-micro/internal/service/v1/user/entity"
-	"github.com/powerdigital/go-micro/internal/service/v1/user/storage/mysql"
+	"github.com/powerdigital/go-micro/internal/service/v1/user/storage"
 )
 
 type UserSrv interface {
@@ -18,10 +18,10 @@ type UserSrv interface {
 }
 
 type UserService struct {
-	repo mysql.UserRepo
+	repo storage.UserRepo
 }
 
-func NewUserService(repo mysql.UserRepo) *UserService {
+func NewUserService(repo storage.UserRepo) *UserService {
 	return &UserService{repo: repo}
 }
 

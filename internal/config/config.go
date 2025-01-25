@@ -16,12 +16,14 @@ type Config struct {
 	GRPC       GRPC
 	Monitoring Monitoring
 	MySQL      MySQL
+	Postgres   Postgres
 }
 
 type App struct {
 	ENV      string `default:"local" envconfig:"APP_ENV"`
 	Name     string `default:"app"   envconfig:"APP_NAME"`
 	LogLevel string `default:"debug" envconfig:"LOG_LEVEL"`
+	Storage  string `default:"mysql" envconfig:"STORAGE"`
 }
 
 type HTTP struct {

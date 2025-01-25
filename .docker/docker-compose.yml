@@ -7,6 +7,23 @@ services:
       MYSQL_USER: micro
       MYSQL_PASSWORD: secret
     ports:
-      - "3306:3306"
-#    volumes:
-#      - ./volumes/data/mysql/:/var/lib/mysql
+      - 3306:3306
+    volumes:
+      - ./volumes/data/mysql/:/var/lib/mysql
+
+  postgres:
+    image: postgres:16.3-alpine
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRESQL_DATABASE=postgres
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRES_DB=micro
+      - POSTGRES_USER=micro
+      - POSTGRES_PASSWORD=secret
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+volumes:
+  postgres:

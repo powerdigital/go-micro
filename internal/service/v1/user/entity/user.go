@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/powerdigital/go-micro/internal/service/v1/user/storage/mysql/model"
+import "github.com/powerdigital/go-micro/internal/service/v1/user/storage"
 
 type User struct {
 	ID    int64  `json:"id"`
@@ -10,8 +10,8 @@ type User struct {
 	Age   int    `json:"age"`
 }
 
-func (u User) EntityToModel() model.User {
-	return model.User{
+func (u User) EntityToModel() storage.User {
+	return storage.User{
 		ID:    u.ID,
 		Name:  u.Name,
 		Email: u.Email,
@@ -20,7 +20,7 @@ func (u User) EntityToModel() model.User {
 	}
 }
 
-func ModelToEntity(u *model.User) User {
+func ModelToEntity(u *storage.User) User {
 	return User{
 		ID:    u.ID,
 		Name:  u.Name,

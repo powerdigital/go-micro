@@ -11,23 +11,23 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/powerdigital/go-micro/internal/config"
-	"github.com/powerdigital/go-micro/internal/service/v1/user/storage/mysql/model"
+	"github.com/powerdigital/go-micro/internal/service/v1/user/storage"
 )
 
-var testDB *sql.DB
-var repo UserRepo
+var db *sql.DB
+var repo storage.UserRepo
 
 func TestMain(m *testing.M) {
 	conf, _ := config.Load()
 
 	var err error
-	testDB, err = sql.Open("mysql", conf.MySQL.DSN)
+	db, err = sql.Open("mysql", conf.MySQL.DSN())
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	defer testDB.Close()
+	defer db.Close()
 
-	_, err = testDB.Exec(`CREATE TABLE IF NOT EXISTS users (
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (
 		id INT AUTO_INCREMENT PRIMARY KEY,
 		name VARCHAR(255) NOT NULL,
 		email VARCHAR(255) NOT NULL,
@@ -38,21 +38,21 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
-	repo = NewUserRepo(testDB)
+	repo = NewUserRepo(db)
 
 	m.Run()
 
-	_, _ = testDB.Exec(`DROP TABLE IF EXISTS users;`)
+	_, _ = db.Exec(`DROP TABLE IF EXISTS users;`)
 }
 
 func setupTestData() {
-	_, _ = testDB.Exec(`TRUNCATE TABLE users;`)
+	_, _ = db.Exec(`TRUNCATE TABLE users;`)
 }
 
 func TestCreateUser(t *testing.T) {
 	setupTestData()
 
-	user := model.User{
+	user := storage.User{
 		Name:  "John Doe",
 		Email: "john.doe@example.com",
 		Phone: "1234567890",
@@ -64,7 +64,7 @@ func TestCreateUser(t *testing.T) {
 	assert.NotZero(t, id)
 
 	var count int
-	err = testDB.QueryRow(`SELECT COUNT(*) FROM users WHERE id = ?`, id).Scan(&count)
+	err = db.QueryRow(`SELECT COUNT(*) FROM users WHERE id = ?`, id).Scan(&count)
 	require.NoError(t, err)
 	assert.Equal(t, 1, count)
 }
@@ -72,7 +72,7 @@ func TestCreateUser(t *testing.T) {
 func TestGetUser(t *testing.T) {
 	setupTestData()
 
-	res, err := testDB.Exec(`INSERT INTO users (name, email, phone, age) VALUES (?, ?, ?, ?)`,
+	res, err := db.Exec(`INSERT INTO users (name, email, phone, age) VALUES (?, ?, ?, ?)`,
 		"Jane Doe", "jane.doe@example.com", "0987654321", 25)
 	require.NoError(t, err)
 
@@ -90,7 +90,7 @@ func TestGetUser(t *testing.T) {
 func TestGetUsers(t *testing.T) {
 	setupTestData()
 
-	_, _ = testDB.Exec(`INSERT INTO users (name, email, phone, age) VALUES 
+	_, _ = db.Exec(`INSERT INTO users (name, email, phone, age) VALUES 
 		('Alice', 'alice@example.com', '1111111111', 28),
 		('Bob', 'bob@example.com', '2222222222', 35)`)
 
@@ -102,14 +102,14 @@ func TestGetUsers(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	setupTestData()
 
-	res, err := testDB.Exec(`INSERT INTO users (name, email, phone, age) VALUES (?, ?, ?, ?)`,
+	res, err := db.Exec(`INSERT INTO users (name, email, phone, age) VALUES (?, ?, ?, ?)`,
 		"Charlie", "charlie@example.com", "3333333333", 40)
 	require.NoError(t, err)
 
 	id, err := res.LastInsertId()
 	require.NoError(t, err)
 
-	err = repo.UpdateUser(context.Background(), model.User{
+	err = repo.UpdateUser(context.Background(), storage.User{
 		ID:    id,
 		Name:  "Charlie Updated",
 		Email: "updated@example.com",
@@ -120,7 +120,7 @@ func TestUpdateUser(t *testing.T) {
 
 	var name, email, phone string
 	var age int
-	err = testDB.QueryRow(`SELECT name, email, phone, age FROM users WHERE id = ?`, id).Scan(&name, &email, &phone, &age)
+	err = db.QueryRow(`SELECT name, email, phone, age FROM users WHERE id = ?`, id).Scan(&name, &email, &phone, &age)
 	require.NoError(t, err)
 	assert.Equal(t, "Charlie Updated", name)
 	assert.Equal(t, "updated@example.com", email)
@@ -131,7 +131,7 @@ func TestUpdateUser(t *testing.T) {
 func TestDeleteUser(t *testing.T) {
 	setupTestData()
 
-	res, err := testDB.Exec(`INSERT INTO users (name, email, phone, age) VALUES (?, ?, ?, ?)`,
+	res, err := db.Exec(`INSERT INTO users (name, email, phone, age) VALUES (?, ?, ?, ?)`,
 		"Dave", "dave@example.com", "5555555555", 50)
 	require.NoError(t, err)
 
@@ -142,7 +142,7 @@ func TestDeleteUser(t *testing.T) {
 	require.NoError(t, err)
 
 	var count int
-	err = testDB.QueryRow(`SELECT COUNT(*) FROM users WHERE id = ?`, id).Scan(&count)
+	err = db.QueryRow(`SELECT COUNT(*) FROM users WHERE id = ?`, id).Scan(&count)
 	require.NoError(t, err)
 	assert.Equal(t, 0, count)
 }

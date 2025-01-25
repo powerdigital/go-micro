@@ -1,5 +1,22 @@
 package config
 
+import "fmt"
+
 type MySQL struct {
-	DSN string `envconfig:"MYSQL_DSN" default:"micro:secret@(localhost:3306)/micro"`
+	Host     string `envconfig:"MYSQL_HOST" default:"localhost"`
+	Port     int    `envconfig:"MYSQL_PORT" default:"3306"`
+	Username string `envconfig:"MYSQL_USER" default:"micro"`
+	Password string `envconfig:"MYSQL_PASS" default:"secret"`
+	Database string `envconfig:"MYSQL_NAME" default:"micro"`
+}
+
+func (my *MySQL) DSN() string {
+	return fmt.Sprintf(
+		"%s:%s@(%s:%d)/%s",
+		my.Username,
+		my.Password,
+		my.Host,
+		my.Port,
+		my.Database,
+	)
 }

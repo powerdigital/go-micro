@@ -2,21 +2,26 @@
 package build
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-
-	"github.com/powerdigital/go-micro/internal/config"
 )
 
-func NewMySQLConnection(config config.Config) (*sql.DB, error) {
-	db, err := sql.Open("mysql", config.MySQL.DSN)
+const maxMySQLTimeout = 10 * time.Second
+
+func NewMySQLConnection(ctx context.Context, dsn string) (*sql.DB, error) {
+	ctx, cancel := context.WithTimeout(ctx, maxMySQLTimeout)
+	defer cancel()
+
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create database connection: %w", err)
 	}
 
-	if err := db.Ping(); err != nil {
+	if err := db.PingContext(ctx); err != nil {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 

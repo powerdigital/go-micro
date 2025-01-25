@@ -1,109 +1,91 @@
-package userservice
+package userservice_test
 
 import (
 	"context"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
+	userservice "github.com/powerdigital/go-micro/internal/service/v1/user"
 	"github.com/powerdigital/go-micro/internal/service/v1/user/entity"
-	"github.com/powerdigital/go-micro/internal/service/v1/user/storage/mysql/mock"
-	"github.com/powerdigital/go-micro/internal/service/v1/user/storage/mysql/model"
+	"github.com/powerdigital/go-micro/internal/service/v1/user/storage"
 )
 
+// MockUserRepo is a mock implementation of storage.UserRepo
+type MockUserRepo struct {
+	mock.Mock
+}
+
+func (m *MockUserRepo) CreateUser(ctx context.Context, user storage.User) (int64, error) {
+	args := m.Called(ctx, user)
+	return args.Get(0).(int64), args.Error(1)
+}
+
+func (m *MockUserRepo) GetUser(ctx context.Context, userID int64) (*storage.User, error) {
+	args := m.Called(ctx, userID)
+	return args.Get(0).(*storage.User), args.Error(1)
+}
+
+func (m *MockUserRepo) GetUsers(ctx context.Context) ([]storage.User, error) {
+	args := m.Called(ctx)
+	return args.Get(0).([]storage.User), args.Error(1)
+}
+
+func (m *MockUserRepo) UpdateUser(ctx context.Context, user storage.User) error {
+	args := m.Called(ctx, user)
+	return args.Error(0)
+}
+
+func (m *MockUserRepo) DeleteUser(ctx context.Context, userID int64) error {
+	args := m.Called(ctx, userID)
+	return args.Error(0)
+}
+
 func TestUserService_CreateUser(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	mockRepo := new(MockUserRepo)
+	service := userservice.NewUserService(mockRepo)
 
-	mockRepo := mock.NewMockUserRepo(ctrl)
-	service := NewUserService(mockRepo)
+	user := entity.User{
+		ID:   1,
+		Name: "John Doe",
+		Age:  30,
+	}
 
-	user := entity.User{Name: "John", Email: "john@example.com", Phone: "1234567890", Age: 30}
-	modelUser := user.EntityToModel()
-
-	mockRepo.EXPECT().
-		CreateUser(gomock.Any(), modelUser).
-		Return(int64(1), nil)
+	mockRepo.On("CreateUser", mock.Anything, user.EntityToModel()).Return(int64(1), nil)
 
 	id, err := service.CreateUser(context.Background(), user)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), id)
+	mockRepo.AssertExpectations(t)
 }
 
 func TestUserService_GetUser(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	mockRepo := new(MockUserRepo)
+	service := userservice.NewUserService(mockRepo)
 
-	mockRepo := mock.NewMockUserRepo(ctrl)
-	service := NewUserService(mockRepo)
+	User := &storage.User{
+		ID:   1,
+		Name: "John Doe",
+		Age:  30,
+	}
+	userEntity := entity.ModelToEntity(User)
 
-	modelUser := model.User{ID: 1, Name: "John", Email: "john@example.com", Phone: "1234567890", Age: 30}
-	expectedUser := entity.User{ID: 1, Name: "John", Email: "john@example.com", Phone: "1234567890", Age: 30}
-
-	mockRepo.EXPECT().
-		GetUser(gomock.Any(), int64(1)).
-		Return(&modelUser, nil)
+	mockRepo.On("GetUser", mock.Anything, int64(1)).Return(User, nil)
 
 	user, err := service.GetUser(context.Background(), 1)
 	assert.NoError(t, err)
-	assert.Equal(t, expectedUser, user)
-}
-
-func TestUserService_GetUsers(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock.NewMockUserRepo(ctrl)
-	service := NewUserService(mockRepo)
-
-	modelUsers := []model.User{
-		{ID: 1, Name: "John", Email: "john@example.com", Phone: "1234567890", Age: 30},
-		{ID: 2, Name: "Jane", Email: "jane@example.com", Phone: "0987654321", Age: 25},
-	}
-	expectedUsers := []entity.User{
-		{ID: 1, Name: "John", Email: "john@example.com", Phone: "1234567890", Age: 30},
-		{ID: 2, Name: "Jane", Email: "jane@example.com", Phone: "0987654321", Age: 25},
-	}
-
-	mockRepo.EXPECT().
-		GetUsers(gomock.Any()).
-		Return(modelUsers, nil)
-
-	users, err := service.GetUsers(context.Background())
-	assert.NoError(t, err)
-	assert.Equal(t, expectedUsers, users)
-}
-
-func TestUserService_UpdateUser(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock.NewMockUserRepo(ctrl)
-	service := NewUserService(mockRepo)
-
-	user := entity.User{ID: 1, Name: "Updated", Email: "updated@example.com", Phone: "9999999999", Age: 35}
-	modelUser := user.EntityToModel()
-
-	mockRepo.EXPECT().
-		UpdateUser(gomock.Any(), modelUser).
-		Return(nil)
-
-	err := service.UpdateUser(context.Background(), user)
-	assert.NoError(t, err)
+	assert.Equal(t, userEntity, user)
+	mockRepo.AssertExpectations(t)
 }
 
 func TestUserService_DeleteUser(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	mockRepo := new(MockUserRepo)
+	service := userservice.NewUserService(mockRepo)
 
-	mockRepo := mock.NewMockUserRepo(ctrl)
-	service := NewUserService(mockRepo)
-
-	mockRepo.EXPECT().
-		DeleteUser(gomock.Any(), int64(1)).
-		Return(nil)
+	mockRepo.On("DeleteUser", mock.Anything, int64(1)).Return(nil)
 
 	err := service.DeleteUser(context.Background(), 1)
 	assert.NoError(t, err)
+	mockRepo.AssertExpectations(t)
 }

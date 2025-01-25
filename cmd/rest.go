@@ -1,4 +1,3 @@
-//nolint:dupl
 package cmd
 
 import (
@@ -27,7 +26,7 @@ func restServer(ctx context.Context, conf config.Config) *cobra.Command {
 				return errors.Wrap(err, "build http server")
 			}
 
-			err = builder.SetHTTPHandlers()
+			err = builder.SetHTTPHandlers(ctx)
 			if err != nil {
 				return errors.Wrap(err, "set rest handlers")
 			}
