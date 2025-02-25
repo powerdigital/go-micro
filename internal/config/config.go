@@ -17,6 +17,7 @@ type Config struct {
 	Monitoring Monitoring
 	MySQL      MySQL
 	Postgres   Postgres
+	Kafka      Kafka
 }
 
 type App struct {

@@ -15,6 +15,8 @@ run-grpc:
 	make build-binary && ./bin/app grpc
 run-graphql:
 	make build-binary && ./bin/app graphql
+run-kafka:
+	make build-binary && ./bin/app kafka all
 
 up:
 	docker compose -f .docker/docker-compose.yml up -d

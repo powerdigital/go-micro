@@ -1,6 +1,7 @@
 services:
   mysql:
     image: mysql:8.0
+    container_name: micro-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: micro
@@ -9,21 +10,77 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./volumes/data/mysql/:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+    networks:
+      - micro-network
 
   postgres:
     image: postgres:16.3-alpine
+    container_name: micro-postgres
     environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
-      - POSTGRESQL_DATABASE=postgres
-      - POSTGRESQL_USERNAME=postgres
       - POSTGRES_DB=micro
       - POSTGRES_USER=micro
       - POSTGRES_PASSWORD=secret
     ports:
-      - 127.0.0.1:5432:5432
+      - 5432:5432
     volumes:
       - postgres:/var/lib/postgresql/data
+    networks:
+      - micro-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: micro-zookeeper
+#    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - micro-network
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: micro-broker
+#    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:19092" ]
+      interval: 10s
+      retries: 10
+      start_period: 20s
+    depends_on:
+      - zookeeper
+    ports:
+      - '19092:19092'
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://micro-broker:9092,PLAINTEXT_HOST://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - micro-network
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: micro-kafka-ui
+    ports:
+      - "8083:8083"
+#    restart: always
+    environment:
+      - SERVER_PORT=8083
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=micro-broker:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=micro-zookeeper:2181
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - micro-network
 
 volumes:
   postgres:
+  mysql_data:
+
+networks:
+  micro-network:
+    driver: bridge
+    name: micro-network

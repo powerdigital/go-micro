@@ -20,6 +20,7 @@ func Run(ctx context.Context, conf config.Config) error {
 		restServer(ctx, conf),
 		grpcServer(ctx, conf),
 		gqlServer(ctx, conf),
+		kafkaServer(ctx, conf),
 	)
 
 	return errors.Wrap(root.ExecuteContext(ctx), "run application")
