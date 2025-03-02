@@ -115,7 +115,7 @@ func (s *GRPCHandler) GetUsers(
 
 	usersList, err := s.service.GetUsers(ctx, limit)
 	if err != nil {
-		return nil, errors.Wrap(err, "get user")
+		return nil, errors.Wrap(err, "get users")
 	}
 
 	users := make([]*userv1.GetUserResponse, 0, len(usersList))
