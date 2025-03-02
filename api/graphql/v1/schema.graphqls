@@ -4,13 +4,19 @@ schema {
 }
 
 type Query {
-    "Get user"
-    getUser(id: Int!): User!
+    "Get single user"
+    getUser(id: Int!): User
+    "Get all users"
+    getUsers: [User]
 }
 
 type Mutation {
     "Create user"
     createUser(user: CreateUser!): Int!
+    "Update user"
+    updateUser(user: UpdateUser!): Int!
+    "Delete user"
+    deleteUser(id: Int!): Int!
 }
 
 "User response data structure"
@@ -24,6 +30,15 @@ type User {
 
 "User creation data structure"
 input CreateUser {
+    name: String!
+    email: String!
+    phone: String!
+    age: Int!
+}
+
+"User updating data structure"
+input UpdateUser {
+    id: Int!
     name: String!
     email: String!
     phone: String!

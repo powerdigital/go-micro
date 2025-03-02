@@ -13,10 +13,12 @@ import (
 func (b *Builder) GRPCServer(ctx context.Context) (*grpc.Server, error) {
 	grpcServer := grpc.NewServer()
 
-	userServer, err := b.UserServer(ctx)
+	service, err := b.UserService(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "build user server")
+		return nil, errors.Wrap(err, "build UserService")
 	}
+
+	userServer := grpcv1.NewGRPCHandler(service)
 
 	userv1.RegisterUserAPIServer(grpcServer, userServer)
 
@@ -27,13 +29,4 @@ func (b *Builder) GRPCServer(ctx context.Context) (*grpc.Server, error) {
 	})
 
 	return grpcServer, nil
-}
-
-func (b *Builder) UserServer(ctx context.Context) (*grpcv1.GRPCHandler, error) {
-	service, err := b.UserService(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err, "build UserService")
-	}
-
-	return grpcv1.NewGRPCHandler(service), nil
 }
