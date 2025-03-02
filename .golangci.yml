@@ -1,6 +1,6 @@
 run:
   go: "1.22"
-  timeout: 2m
+  timeout: 1m
   build-tags:
     - mock
     - integration

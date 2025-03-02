@@ -1,3 +1,4 @@
+//nolint:dupl
 package cmd
 
 import (
@@ -26,7 +27,7 @@ func gqlServer(ctx context.Context, conf config.Config) *cobra.Command {
 				return errors.Wrap(err, "build graphql server")
 			}
 
-			err = builder.SetGqlHandlers()
+			err = builder.SetGqlHandlers(ctx)
 			if err != nil {
 				return errors.Wrap(err, "set graphql handlers")
 			}

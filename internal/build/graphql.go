@@ -51,7 +51,7 @@ func (b *Builder) gqlHTTPRouter() *mux.Router {
 	return b.http.router
 }
 
-func (b *Builder) SetGqlHandlers() error {
+func (b *Builder) SetGqlHandlers(ctx context.Context) error {
 	router := b.httpRouter()
 	router.Use(handlers.CORS(
 		handlers.AllowedHeaders([]string{
@@ -64,7 +64,12 @@ func (b *Builder) SetGqlHandlers() error {
 		handlers.AllowedMethods([]string{"OPTIONS", "POST", "GET"}),
 	))
 
-	handler := graphqlv1.NewGqlHandler()
+	service, err := b.UserService(ctx)
+	if err != nil {
+		return err
+	}
+
+	handler := graphqlv1.NewGqlHandler(service)
 	router.Handle("/query", handler)
 	router.Handle("/playground", playground.Handler("Playground", "/query"))
 

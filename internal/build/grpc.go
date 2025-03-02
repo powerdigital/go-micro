@@ -7,18 +7,18 @@ import (
 	"google.golang.org/grpc"
 
 	grpcv1 "github.com/powerdigital/go-micro/internal/transport/grpc/v1"
-	hellov1 "github.com/powerdigital/go-micro/pkg/grpc/v1"
+	userv1 "github.com/powerdigital/go-micro/pkg/grpc/v1"
 )
 
-func (b *Builder) GRPCServer() (*grpc.Server, error) {
+func (b *Builder) GRPCServer(ctx context.Context) (*grpc.Server, error) {
 	grpcServer := grpc.NewServer()
 
-	greetingServer, err := b.GreetingServer()
+	userServer, err := b.UserServer(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "build greeting server")
+		return nil, errors.Wrap(err, "build user server")
 	}
 
-	hellov1.RegisterGreeterAPIServer(grpcServer, greetingServer)
+	userv1.RegisterUserAPIServer(grpcServer, userServer)
 
 	b.shutdown.add(func(_ context.Context) error {
 		grpcServer.GracefulStop()
@@ -29,10 +29,10 @@ func (b *Builder) GRPCServer() (*grpc.Server, error) {
 	return grpcServer, nil
 }
 
-func (b *Builder) GreetingServer() (*grpcv1.GRPCHandler, error) {
-	service, err := b.GreetingService()
+func (b *Builder) UserServer(ctx context.Context) (*grpcv1.GRPCHandler, error) {
+	service, err := b.UserService(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "build GreetingService")
+		return nil, errors.Wrap(err, "build UserService")
 	}
 
 	return grpcv1.NewGRPCHandler(service), nil

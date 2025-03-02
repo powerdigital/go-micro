@@ -1,4 +1,4 @@
-schema: api/graphql/v1/schema.graphqls
+schema: api/graphql/v1/*.graphqls
 exec:
   filename: ./pkg/graphql/v1/schema_generated.go
 model:
@@ -11,8 +11,8 @@ models:
     model:
       - github.com/99designs/gqlgen/graphql.ID
       - github.com/99designs/gqlgen/graphql.Int
-      - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+      - github.com/99designs/gqlgen/graphql.Int64
   UUID:
     model:
       - github.com/99designs/gqlgen/graphql.UUID

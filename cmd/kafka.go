@@ -15,7 +15,7 @@ import (
 	"github.com/powerdigital/go-micro/internal/config"
 )
 
-type consumerConstructor func(ctx context.Context) (*build.Consumer, error)
+type consumerStorage func(ctx context.Context) (*build.Consumer, error)
 
 func kafkaServer(ctx context.Context, conf config.Config) *cobra.Command {
 	builder := build.New(conf)
@@ -37,8 +37,8 @@ func kafkaServer(ctx context.Context, conf config.Config) *cobra.Command {
 	cmd.AddCommand(
 		&cobra.Command{
 			Use:   "all",
-			Short: "common consumer for read all topics",
-			RunE: runConsumers(ctx, []consumerConstructor{
+			Short: "common consumer for reading all topics",
+			RunE: runConsumers(ctx, []consumerStorage{
 				builder.UserCreatingConsumer,
 			}, builder),
 		},
@@ -50,7 +50,7 @@ func kafkaServer(ctx context.Context, conf config.Config) *cobra.Command {
 //nolint:cyclop
 func runConsumers(
 	ctx context.Context,
-	constructors []consumerConstructor,
+	consumers []consumerStorage,
 	builder *build.Builder,
 ) func(cmd *cobra.Command, args []string) error {
 	return func(_ *cobra.Command, _ []string) error {
@@ -72,8 +72,8 @@ func runConsumers(
 		localCtx, cancel := context.WithCancel(ctx)
 		defer cancel()
 
-		for _, construct := range constructors {
-			consumer, err := construct(localCtx)
+		for _, consumerBlank := range consumers {
+			consumer, err := consumerBlank(localCtx)
 			if err != nil {
 				cancel()
 

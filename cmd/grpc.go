@@ -24,7 +24,7 @@ func grpcServer(ctx context.Context, conf config.Config) *cobra.Command {
 			ctx, cancel := context.WithCancel(ctx)
 			defer cancel()
 
-			grpcSrv, err := builder.GRPCServer()
+			grpcSrv, err := builder.GRPCServer(ctx)
 			if err != nil {
 				return errors.Wrap(err, "build grpc server")
 			}

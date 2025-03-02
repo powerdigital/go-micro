@@ -1,3 +1,31 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
 type Query {
-  hello(name: String!): String!
+    "Get user"
+    getUser(id: Int!): User!
+}
+
+type Mutation {
+    "Create user"
+    createUser(user: CreateUser!): Int!
+}
+
+"User response data structure"
+type User {
+    id: Int!
+    name: String!
+    email: String!
+    phone: String!
+    age: Int!
+}
+
+"User creation data structure"
+input CreateUser {
+    name: String!
+    email: String!
+    phone: String!
+    age: Int!
 }

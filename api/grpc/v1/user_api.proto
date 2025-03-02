@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package user.v1;
+
+option go_package = "user/v1;userv1";
+
+// Service for user management
+service UserAPI {
+  // Create user method
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+}
+
+// User creation data
+message CreateUserRequest {
+  // Name
+  string name = 1;
+  // Email
+  string email = 2;
+  // Phone
+  string phone = 3;
+  // Age
+  uint32 age = 4;
+}
+
+// User created response
+message CreateUserResponse {
+  // Created user's ID
+  uint32 user_id = 1;
+}

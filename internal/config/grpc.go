@@ -7,7 +7,7 @@ type GRPC struct {
 	Port        uint16 `default:"8081" envconfig:"GRPC_PORT"`
 }
 
-func (c Config) GRPCNetworkType() string {
+func (c *Config) GRPCNetworkType() string {
 	return c.GRPC.NetworkType
 }
 
