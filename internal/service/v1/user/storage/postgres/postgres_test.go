@@ -61,7 +61,8 @@ func TestUserRepo(t *testing.T) {
 	require.Equal(t, user.Age, fetchedUser.Age)
 
 	// Test GetUsers
-	users, err := repo.GetUsers(ctx)
+	limit := 10
+	users, err := repo.GetUsers(ctx, rune(limit))
 	require.NoError(t, err)
 	require.Len(t, users, 1)
 	require.Equal(t, user.Name, users[0].Name)

@@ -53,7 +53,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		GetUser  func(childComplexity int, id int32) int
-		GetUsers func(childComplexity int) int
+		GetUsers func(childComplexity int, limit int32) int
 	}
 
 	User struct {
@@ -72,7 +72,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	GetUser(ctx context.Context, id int32) (*User, error)
-	GetUsers(ctx context.Context) ([]*User, error)
+	GetUsers(ctx context.Context, limit int32) ([]*User, error)
 }
 
 type executableSchema struct {
@@ -147,7 +147,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.GetUsers(childComplexity), true
+		args, err := ec.field_Query_getUsers_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetUsers(childComplexity, args["limit"].(int32)), true
 
 	case "User.age":
 		if e.complexity.User.Age == nil {
@@ -300,7 +305,7 @@ type Query {
     "Get single user"
     getUser(id: Int!): User
     "Get all users"
-    getUsers: [User]
+    getUsers(limit: Int!): [User]
 }
 
 type Mutation {
@@ -478,6 +483,34 @@ func (ec *executionContext) field_Query_getUser_argsID(
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNInt2int32(ctx, tmp)
+	}
+
+	var zeroVal int32
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getUsers_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_getUsers_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_getUsers_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int32, error) {
+	if _, ok := rawArgs["limit"]; !ok {
+		var zeroVal int32
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
 		return ec.unmarshalNInt2int32(ctx, tmp)
 	}
 
@@ -848,7 +881,7 @@ func (ec *executionContext) _Query_getUsers(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUsers(rctx)
+		return ec.resolvers.Query().GetUsers(rctx, fc.Args["limit"].(int32))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -862,7 +895,7 @@ func (ec *executionContext) _Query_getUsers(ctx context.Context, field graphql.C
 	return ec.marshalOUser2ᚕᚖgithubᚗcomᚋpowerdigitalᚋgoᚑmicroᚋpkgᚋgraphqlᚋv1ᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getUsers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getUsers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -883,6 +916,17 @@ func (ec *executionContext) fieldContext_Query_getUsers(_ context.Context, field
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getUsers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }

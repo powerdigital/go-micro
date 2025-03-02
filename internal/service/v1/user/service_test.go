@@ -27,8 +27,8 @@ func (m *MockUserRepo) GetUser(ctx context.Context, userID int64) (*storage.User
 	return args.Get(0).(*storage.User), args.Error(1)
 }
 
-func (m *MockUserRepo) GetUsers(ctx context.Context) ([]storage.User, error) {
-	args := m.Called(ctx)
+func (m *MockUserRepo) GetUsers(ctx context.Context, limit rune) ([]storage.User, error) {
+	args := m.Called(ctx, limit)
 	return args.Get(0).([]storage.User), args.Error(1)
 }
 

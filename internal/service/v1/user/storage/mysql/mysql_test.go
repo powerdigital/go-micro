@@ -94,7 +94,8 @@ func TestGetUsers(t *testing.T) {
 		('Alice', 'alice@example.com', '1111111111', 28),
 		('Bob', 'bob@example.com', '2222222222', 35)`)
 
-	users, err := repo.GetUsers(context.Background())
+	limit := rune(10)
+	users, err := repo.GetUsers(context.Background(), limit)
 	require.NoError(t, err)
 	assert.Len(t, users, 2)
 }

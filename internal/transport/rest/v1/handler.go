@@ -73,7 +73,16 @@ func (h *RESTHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *RESTHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := h.userService.GetUsers(r.Context())
+	params := mux.Vars(r)
+
+	limit, err := strconv.Atoi(params["limit"])
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+
+		return
+	}
+
+	users, err := h.userService.GetUsers(r.Context(), rune(limit))
 	if err != nil {
 		http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
 

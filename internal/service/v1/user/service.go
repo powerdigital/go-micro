@@ -12,7 +12,7 @@ import (
 type UserSrv interface {
 	CreateUser(ctx context.Context, user entity.User) (int64, error)
 	GetUser(ctx context.Context, userID int64) (entity.User, error)
-	GetUsers(ctx context.Context) ([]entity.User, error)
+	GetUsers(ctx context.Context, limit rune) ([]entity.User, error)
 	UpdateUser(ctx context.Context, user entity.User) error
 	DeleteUser(ctx context.Context, userID int64) error
 }
@@ -43,8 +43,8 @@ func (s *UserService) GetUser(ctx context.Context, userID int64) (entity.User, e
 	return entity.ModelToEntity(userModel), nil
 }
 
-func (s *UserService) GetUsers(ctx context.Context) ([]entity.User, error) {
-	userModels, err := s.repo.GetUsers(ctx)
+func (s *UserService) GetUsers(ctx context.Context, limit rune) ([]entity.User, error) {
+	userModels, err := s.repo.GetUsers(ctx, limit)
 	if err != nil {
 		return nil, errors.Wrap(err, "get users")
 	}

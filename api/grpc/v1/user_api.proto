@@ -6,8 +6,16 @@ option go_package = "user/v1;userv1";
 
 // Service for user management
 service UserAPI {
-  // Create user method
+  // Create user
   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+  // Update user
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
+  // Delete user
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+  // Get user
+  rpc GetUser (GetUserRequest) returns (GetUserResponse);
+  // Get users
+  rpc GetUsers (GetUsersRequest) returns (GetUsersResponse);
 }
 
 // User creation data
@@ -26,4 +34,68 @@ message CreateUserRequest {
 message CreateUserResponse {
   // Created user's ID
   uint32 user_id = 1;
+}
+
+// User updating data
+message UpdateUserRequest {
+  // User ID
+  uint32 id = 1;
+  // Name
+  string name = 2;
+  // Email
+  string email = 3;
+  // Phone
+  string phone = 4;
+  // Age
+  uint32 age = 5;
+}
+
+// User updating response
+message UpdateUserResponse {
+  // Updated user's ID
+  uint32 user_id = 1;
+}
+
+// User deleting request
+message DeleteUserRequest {
+  // Deleted user's ID
+  uint32 user_id = 1;
+}
+
+// User deleting response
+message DeleteUserResponse {
+  // Deleted user's ID
+  uint32 user_id = 1;
+}
+
+// User getting request
+message GetUserRequest {
+  // Requested user's ID
+  uint32 user_id = 1;
+}
+
+// User updating response
+message GetUserResponse {
+  // User ID
+  uint32 id = 1;
+  // Name
+  string name = 2;
+  // Email
+  string email = 3;
+  // Phone
+  string phone = 4;
+  // Age
+  uint32 age = 5;
+}
+
+// Users getting request
+message GetUsersRequest {
+  // Requested users limit
+  uint32 limit = 1;
+}
+
+// Users getting request
+message GetUsersResponse {
+  // Requested users list
+  repeated GetUserResponse users = 1;
 }

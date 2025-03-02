@@ -7,7 +7,7 @@ type Query {
     "Get single user"
     getUser(id: Int!): User
     "Get all users"
-    getUsers: [User]
+    getUsers(limit: Int!): [User]
 }
 
 type Mutation {

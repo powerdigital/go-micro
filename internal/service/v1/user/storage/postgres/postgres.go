@@ -73,10 +73,12 @@ func (repo *userRepo) GetUser(ctx context.Context, userID int64) (*storage.User,
 	return &user, nil
 }
 
-func (repo *userRepo) GetUsers(ctx context.Context) ([]storage.User, error) {
-	query := `SELECT id, name, email, phone, age FROM users`
+func (repo *userRepo) GetUsers(ctx context.Context, limit rune) ([]storage.User, error) {
+	query := `SELECT id, name, email, phone, age FROM users LIMIT :limit`
 
-	rows, err := repo.db.NamedQueryContext(ctx, query, map[string]interface{}{})
+	rows, err := repo.db.NamedQueryContext(ctx, query, map[string]interface{}{
+		"limit": int(limit),
+	})
 	if err != nil || rows.Err() != nil {
 		return nil, errors.Wrap(err, "error fetching users")
 	}
