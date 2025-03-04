@@ -1,11 +1,11 @@
 schema: api/graphql/v1/*.graphqls
 exec:
-  filename: ./pkg/graphql/v1/schema_generated.go
+  filename: ./internal/transport/graphql/v1/schema_generated.go
 model:
-  filename: ./pkg/graphql/v1/models_generated.go
+  filename: ./internal/transport/graphql/v1/models_generated.go
 resolver:
   layout: follow-schema
-  dir: pkg/graphql/v1
+  dir: internal/transport/graphql/v1
 models:
   ID:
     model:

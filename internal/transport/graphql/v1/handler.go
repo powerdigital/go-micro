@@ -9,13 +9,12 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 
 	userservice "github.com/powerdigital/go-micro/internal/service/v1/user"
-	graphqlv1 "github.com/powerdigital/go-micro/pkg/graphql/v1"
 )
 
 //nolint:exhaustruct
 func NewGqlHandler(service userservice.UserSrv) http.Handler {
-	h := handler.New(graphqlv1.NewExecutableSchema(graphqlv1.Config{
-		Resolvers: graphqlv1.NewResolver(service),
+	h := handler.New(NewExecutableSchema(Config{
+		Resolvers: &Resolver{service},
 	}))
 
 	h.AddTransport(transport.GET{})

@@ -1,4 +1,4 @@
-package v1
+package graphqlv1
 
 import userservice "github.com/powerdigital/go-micro/internal/service/v1/user"
 
@@ -8,10 +8,4 @@ import userservice "github.com/powerdigital/go-micro/internal/service/v1/user"
 
 type Resolver struct {
 	service userservice.UserSrv
-}
-
-func NewResolver(service userservice.UserSrv) *Resolver {
-	return &Resolver{
-		service: service,
-	}
 }

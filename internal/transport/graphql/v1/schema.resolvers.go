@@ -1,4 +1,4 @@
-package v1
+package graphqlv1
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -12,7 +12,7 @@ import (
 )
 
 // CreateUser is the resolver for the createUser field.
-func (r *mutationResolver) CreateUser(ctx context.Context, user CreateUser) (int32, error) {
+func (r *mutationResolver) CreateUser(ctx context.Context, user UserRequest) (int32, error) {
 	//nolint:exhaustruct
 	userEntity := entity.User{
 		Name:  user.Name,
@@ -30,9 +30,10 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user CreateUser) (int
 }
 
 // UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, user UpdateUser) (int32, error) {
+func (r *mutationResolver) UpdateUser(ctx context.Context, user UserRequest) (int32, error) {
+	userID := *user.ID
 	userEntity := entity.User{
-		ID:    int64(user.ID),
+		ID:    int64(userID),
 		Name:  user.Name,
 		Email: user.Email,
 		Phone: user.Phone,
@@ -44,7 +45,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user UpdateUser) (int
 		return 0, fmt.Errorf("failed to update user: %w", err)
 	}
 
-	return user.ID, nil
+	return userID, nil
 }
 
 // DeleteUser is the resolver for the deleteUser field.
@@ -58,13 +59,13 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id int32) (int32, err
 }
 
 // GetUser is the resolver for the getUser field.
-func (r *queryResolver) GetUser(ctx context.Context, id int32) (*User, error) {
+func (r *queryResolver) GetUser(ctx context.Context, id int32) (*UserResponse, error) {
 	u, err := r.service.GetUser(ctx, int64(id))
 	if err != nil {
-		return &User{}, fmt.Errorf("failed to get user: %w", err)
+		return &UserResponse{}, fmt.Errorf("failed to get user: %w", err)
 	}
 
-	user := User{
+	user := UserResponse{
 		ID:    int32(u.ID),
 		Name:  u.Name,
 		Email: u.Email,
@@ -76,16 +77,16 @@ func (r *queryResolver) GetUser(ctx context.Context, id int32) (*User, error) {
 }
 
 // GetUsers is the resolver for the getUsers field.
-func (r *queryResolver) GetUsers(ctx context.Context, limit int32) ([]*User, error) {
+func (r *queryResolver) GetUsers(ctx context.Context, limit int32) ([]*UserResponse, error) {
 	users, err := r.service.GetUsers(ctx, limit)
 	if err != nil {
-		return []*User{}, fmt.Errorf("failed to get users: %w", err)
+		return []*UserResponse{}, fmt.Errorf("failed to get users: %w", err)
 	}
 
-	userList := make([]*User, 0, len(users))
+	userList := make([]*UserResponse, 0, len(users))
 
 	for _, u := range users {
-		user := User{
+		user := UserResponse{
 			ID:    int32(u.ID),
 			Name:  u.Name,
 			Email: u.Email,
