@@ -18,13 +18,6 @@ func (b *Builder) WaitShutdown(ctx context.Context) {
 	b.shutdown.do(ctx)
 }
 
-func (b *Builder) ShutdownContext(ctx context.Context) context.Context {
-	stopSignals := []os.Signal{syscall.SIGTERM, syscall.SIGINT}
-	shutdownContext, _ := signal.NotifyContext(ctx, stopSignals...)
-
-	return shutdownContext
-}
-
 func (b *Builder) ShutdownChannel(ctx context.Context) chan struct{} {
 	stop := make(chan struct{})
 
@@ -40,11 +33,6 @@ func (b *Builder) ShutdownChannel(ctx context.Context) chan struct{} {
 	}()
 
 	return stop
-}
-
-func (b *Builder) Shutdown(ctx context.Context) {
-	zerolog.Ctx(ctx).Info().Msgf("got os signal. application will be stopped")
-	b.shutdown.do(ctx)
 }
 
 type shutdownFn func(context.Context) error
