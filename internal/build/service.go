@@ -17,14 +17,14 @@ func (b *Builder) UserService(ctx context.Context) (userservice.UserSrv, error) 
 	var repo storage.UserRepo
 
 	if b.config.App.Storage == "postgres" {
-		db, err := NewPostgresConnection(ctx, b.config.Postgres.DSN())
+		db, err := b.newPostgresConnection(ctx, b.config.Postgres.DSN())
 		if err != nil {
 			return nil, err
 		}
 
 		repo = postgres.NewUserRepo(db)
 	} else {
-		db, err := NewMySQLConnection(ctx, b.config.MySQL.DSN())
+		db, err := b.newMySQLConnection(ctx, b.config.MySQL.DSN())
 		if err != nil {
 			return nil, err
 		}

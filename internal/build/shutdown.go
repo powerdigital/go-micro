@@ -18,7 +18,7 @@ func (b *Builder) WaitShutdown(ctx context.Context) {
 	b.shutdown.do(ctx)
 }
 
-func (b *Builder) ShutdownChannel(ctx context.Context) chan struct{} {
+func (b *Builder) ChannelShutdown(ctx context.Context) chan struct{} {
 	stop := make(chan struct{})
 
 	go func() {

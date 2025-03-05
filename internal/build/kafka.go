@@ -3,6 +3,8 @@ package build
 import (
 	"context"
 
+	"github.com/cockroachdb/errors"
+
 	kafkav1 "github.com/powerdigital/go-micro/internal/transport/kafka/v1"
 )
 
@@ -39,6 +41,14 @@ func (b *Builder) userCreatingHandler(ctx context.Context) (*kafkav1.ConsumerGro
 	handler := kafkav1.ConsumerGroupHandler{
 		Handler: &sub,
 	}
+
+	b.healthcheck.add(func(ctx context.Context) error {
+		if err := handler.Healthcheck(ctx); err != nil {
+			return errors.Wrap(err, "update handler healthcheck")
+		}
+
+		return nil
+	})
 
 	return &handler, nil
 }

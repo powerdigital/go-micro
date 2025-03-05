@@ -22,7 +22,7 @@ func gqlServer(ctx context.Context, conf config.Config) *cobra.Command {
 			ctx, cancel := context.WithCancel(ctx)
 			defer cancel()
 
-			srv, err := builder.GqlServer(ctx)
+			srv, err := builder.HTTPServer(ctx)
 			if err != nil {
 				return errors.Wrap(err, "build graphql server")
 			}

@@ -14,6 +14,16 @@ import (
 	restv1 "github.com/powerdigital/go-micro/internal/transport/rest/v1"
 )
 
+func (b *Builder) httpRouter() *mux.Router {
+	if b.http.router != nil {
+		return b.http.router
+	}
+
+	b.http.router = mux.NewRouter()
+
+	return b.http.router
+}
+
 func (b *Builder) HTTPServer(ctx context.Context) (*http.Server, error) {
 	const timeout = time.Millisecond * 25
 
@@ -37,16 +47,6 @@ func (b *Builder) HTTPServer(ctx context.Context) (*http.Server, error) {
 	})
 
 	return &server, nil
-}
-
-func (b *Builder) httpRouter() *mux.Router {
-	if b.http.router != nil {
-		return b.http.router
-	}
-
-	b.http.router = mux.NewRouter()
-
-	return b.http.router
 }
 
 func (b *Builder) SetHTTPHandlers(ctx context.Context) error {

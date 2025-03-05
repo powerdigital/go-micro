@@ -54,7 +54,7 @@ func runConsumers(
 	builder *build.Builder,
 ) func(cmd *cobra.Command, args []string) error {
 	return func(_ *cobra.Command, _ []string) error {
-		stop := builder.ShutdownChannel(ctx)
+		stop := builder.ChannelShutdown(ctx)
 
 		srv, err := builder.HTTPServer(ctx)
 		if err != nil {

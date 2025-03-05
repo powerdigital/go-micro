@@ -57,6 +57,14 @@ func (h *ConsumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession,
 	}
 }
 
+func (h *ConsumerGroupHandler) Healthcheck(_ context.Context) error {
+	if h.running.Load() {
+		return nil
+	}
+
+	return errors.New("handler is not running")
+}
+
 type UserCreatingConsumer struct {
 	UserService userservice.UserSrv
 }

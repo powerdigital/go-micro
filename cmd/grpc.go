@@ -31,13 +31,13 @@ func grpcServer(ctx context.Context, conf config.Config) *cobra.Command {
 
 			reflection.Register(grpcSrv)
 
-			httpSrv, err := builder.HTTPServer(ctx)
+			srv, err := builder.HTTPServer(ctx)
 			if err != nil {
 				return errors.Wrap(err, "build http server")
 			}
 
 			go func() {
-				if err := httpSrv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+				if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 					zerolog.Ctx(ctx).Err(err).Msg("run http server")
 				}
 			}()

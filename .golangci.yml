@@ -7,15 +7,16 @@ run:
 linters:
   enable-all: true
   disable:
-    - varnamelen
-    - tagalign
-    - paralleltest
-    - ireturn
-    - godox
-    - unused
-    - gomoddirectives
     - execinquery
+    - godox
     - gomnd
+    - gomoddirectives
+    - ireturn
+    - paralleltest
+    - tagalign
+    - tenv
+    - varnamelen
+    - unused
 linters-settings:
   misspell:
     locale: US
