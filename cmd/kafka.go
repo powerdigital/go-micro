@@ -40,6 +40,7 @@ func kafkaServer(ctx context.Context, conf config.Config) *cobra.Command {
 			Short: "common consumer for reading all topics",
 			RunE: runConsumers(ctx, []consumerStorage{
 				builder.UserCreatingConsumer,
+				builder.UserDeletingConsumer,
 			}, builder),
 		},
 	)

@@ -27,7 +27,9 @@ func (b *Builder) SetGqlHandlers(ctx context.Context) error {
 		return err
 	}
 
-	handler := graphqlv1.NewGqlHandler(service)
+	gqlHandler := graphqlv1.NewGqlHandler(service)
+
+	handler := graphqlv1.NewGqlServerHandler(*gqlHandler)
 	router.Handle("/query", handler)
 	router.Handle("/playground", playground.Handler("Playground", "/query"))
 

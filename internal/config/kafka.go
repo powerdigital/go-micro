@@ -6,4 +6,5 @@ type Kafka struct {
 	Password        string   `envconfig:"KAFKA_PASSWORD"`
 	ConsumerGroup   string   `envconfig:"KAFKA_CONSUMER_GROUP"`
 	TopicCreateUser string   `envconfig:"KAFKA_TOPIC_CREATE_USER"`
+	TopicDeleteUser string   `envconfig:"KAFKA_TOPIC_DELETE_USER"`
 }
