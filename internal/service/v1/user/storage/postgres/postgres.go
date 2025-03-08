@@ -45,6 +45,29 @@ func (repo *userRepo) CreateUser(ctx context.Context, user storage.User) (int64,
 	return user.ID, nil
 }
 
+func (repo *userRepo) UpdateUser(ctx context.Context, user storage.User) error {
+	query := `UPDATE users SET name = :name, email = :email, phone = :phone, age = :age WHERE id = :id`
+
+	_, err := repo.db.NamedExecContext(ctx, query, map[string]interface{}{
+		"name":  user.Name,
+		"email": user.Email,
+		"phone": user.Phone,
+		"age":   user.Age,
+		"id":    user.ID,
+	})
+
+	return errors.Wrap(err, "error updating user")
+}
+
+func (repo *userRepo) DeleteUser(ctx context.Context, userID int64) error {
+	query := `DELETE FROM users WHERE id = :id`
+	_, err := repo.db.NamedExecContext(ctx, query, map[string]interface{}{
+		"id": userID,
+	})
+
+	return errors.Wrap(err, "error deleting user")
+}
+
 func (repo *userRepo) GetUser(ctx context.Context, userID int64) (*storage.User, error) {
 	query := `SELECT id, name, email, phone, age FROM users WHERE id = :id`
 
@@ -100,27 +123,4 @@ func (repo *userRepo) GetUsers(ctx context.Context, limit rune) ([]storage.User,
 	}
 
 	return users, nil
-}
-
-func (repo *userRepo) UpdateUser(ctx context.Context, user storage.User) error {
-	query := `UPDATE users SET name = :name, email = :email, phone = :phone, age = :age WHERE id = :id`
-
-	_, err := repo.db.NamedExecContext(ctx, query, map[string]interface{}{
-		"name":  user.Name,
-		"email": user.Email,
-		"phone": user.Phone,
-		"age":   user.Age,
-		"id":    user.ID,
-	})
-
-	return errors.Wrap(err, "error updating user")
-}
-
-func (repo *userRepo) DeleteUser(ctx context.Context, userID int64) error {
-	query := `DELETE FROM users WHERE id = :id`
-	_, err := repo.db.NamedExecContext(ctx, query, map[string]interface{}{
-		"id": userID,
-	})
-
-	return errors.Wrap(err, "error deleting user")
 }

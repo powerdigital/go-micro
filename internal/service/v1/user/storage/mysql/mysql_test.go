@@ -69,37 +69,6 @@ func TestCreateUser(t *testing.T) {
 	assert.Equal(t, 1, count)
 }
 
-func TestGetUser(t *testing.T) {
-	setupTestData()
-
-	res, err := db.Exec(`INSERT INTO users (name, email, phone, age) VALUES (?, ?, ?, ?)`,
-		"Jane Doe", "jane.doe@example.com", "0987654321", 25)
-	require.NoError(t, err)
-
-	id, err := res.LastInsertId()
-	require.NoError(t, err)
-
-	user, err := repo.GetUser(context.Background(), id)
-	require.NoError(t, err)
-	assert.Equal(t, "Jane Doe", user.Name)
-	assert.Equal(t, "jane.doe@example.com", user.Email)
-	assert.Equal(t, "0987654321", user.Phone)
-	assert.Equal(t, 25, user.Age)
-}
-
-func TestGetUsers(t *testing.T) {
-	setupTestData()
-
-	_, _ = db.Exec(`INSERT INTO users (name, email, phone, age) VALUES 
-		('Alice', 'alice@example.com', '1111111111', 28),
-		('Bob', 'bob@example.com', '2222222222', 35)`)
-
-	limit := rune(10)
-	users, err := repo.GetUsers(context.Background(), limit)
-	require.NoError(t, err)
-	assert.Len(t, users, 2)
-}
-
 func TestUpdateUser(t *testing.T) {
 	setupTestData()
 
@@ -146,4 +115,35 @@ func TestDeleteUser(t *testing.T) {
 	err = db.QueryRow(`SELECT COUNT(*) FROM users WHERE id = ?`, id).Scan(&count)
 	require.NoError(t, err)
 	assert.Equal(t, 0, count)
+}
+
+func TestGetUser(t *testing.T) {
+	setupTestData()
+
+	res, err := db.Exec(`INSERT INTO users (name, email, phone, age) VALUES (?, ?, ?, ?)`,
+		"Jane Doe", "jane.doe@example.com", "0987654321", 25)
+	require.NoError(t, err)
+
+	id, err := res.LastInsertId()
+	require.NoError(t, err)
+
+	user, err := repo.GetUser(context.Background(), id)
+	require.NoError(t, err)
+	assert.Equal(t, "Jane Doe", user.Name)
+	assert.Equal(t, "jane.doe@example.com", user.Email)
+	assert.Equal(t, "0987654321", user.Phone)
+	assert.Equal(t, 25, user.Age)
+}
+
+func TestGetUsers(t *testing.T) {
+	setupTestData()
+
+	_, _ = db.Exec(`INSERT INTO users (name, email, phone, age) VALUES 
+		('Alice', 'alice@example.com', '1111111111', 28),
+		('Bob', 'bob@example.com', '2222222222', 35)`)
+
+	limit := rune(10)
+	users, err := repo.GetUsers(context.Background(), limit)
+	require.NoError(t, err)
+	assert.Len(t, users, 2)
 }

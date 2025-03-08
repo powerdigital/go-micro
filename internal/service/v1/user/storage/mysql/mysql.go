@@ -33,6 +33,20 @@ func (repo *userRepo) CreateUser(ctx context.Context, user storage.User) (int64,
 	return id, nil
 }
 
+func (repo *userRepo) UpdateUser(ctx context.Context, user storage.User) error {
+	query := `UPDATE users SET name = ?, email = ?, phone = ?, age = ? WHERE id = ?`
+	_, err := repo.db.ExecContext(ctx, query, user.Name, user.Email, user.Phone, user.Age, user.ID)
+
+	return errors.Wrap(err, "error updating user")
+}
+
+func (repo *userRepo) DeleteUser(ctx context.Context, userID int64) error {
+	query := `DELETE FROM users WHERE id = ?`
+	_, err := repo.db.ExecContext(ctx, query, userID)
+
+	return errors.Wrap(err, "error deleting user")
+}
+
 func (repo *userRepo) GetUser(ctx context.Context, userID int64) (*storage.User, error) {
 	query := `SELECT id, name, email, phone, age FROM users WHERE id = ?`
 
@@ -71,18 +85,4 @@ func (repo *userRepo) GetUsers(ctx context.Context, limit rune) ([]storage.User,
 	}
 
 	return users, nil
-}
-
-func (repo *userRepo) UpdateUser(ctx context.Context, user storage.User) error {
-	query := `UPDATE users SET name = ?, email = ?, phone = ?, age = ? WHERE id = ?`
-	_, err := repo.db.ExecContext(ctx, query, user.Name, user.Email, user.Phone, user.Age, user.ID)
-
-	return errors.Wrap(err, "error updating user")
-}
-
-func (repo *userRepo) DeleteUser(ctx context.Context, userID int64) error {
-	query := `DELETE FROM users WHERE id = ?`
-	_, err := repo.db.ExecContext(ctx, query, userID)
-
-	return errors.Wrap(err, "error deleting user")
 }

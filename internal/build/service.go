@@ -32,7 +32,12 @@ func (b *Builder) UserService(ctx context.Context) (userservice.UserSrv, error) 
 		repo = mysql.NewUserRepo(db)
 	}
 
-	b.userService = userservice.NewUserService(repo)
+	producer, err := b.Producer(b.config.Kafka.Brokers, b.config.Kafka.TopicUserCreated)
+	if err != nil {
+		return nil, err
+	}
+
+	b.userService = userservice.NewUserService(repo, producer)
 
 	return b.userService, nil
 }
