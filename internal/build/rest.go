@@ -8,9 +8,11 @@ import (
 	"time"
 
 	"github.com/cockroachdb/errors"
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog"
 
+	"github.com/powerdigital/go-micro/internal/service/v1/user/entity"
 	restv1 "github.com/powerdigital/go-micro/internal/transport/rest/v1"
 )
 
@@ -57,7 +59,12 @@ func (b *Builder) SetHTTPHandlers(ctx context.Context) error {
 		return errors.Wrap(err, "get UserService")
 	}
 
-	handler := restv1.NewRESTHandler(service)
+	validate := validator.New()
+	if err = entity.RegisterValidators(validate); err != nil {
+		return errors.Wrap(err, "register entity validators")
+	}
+
+	handler := restv1.NewRESTHandler(service, validate)
 
 	router.HandleFunc("/users", handler.CreateUser).Methods("POST")
 	router.HandleFunc("/users/{id}", handler.GetUser).Methods("GET")

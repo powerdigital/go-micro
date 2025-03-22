@@ -49,21 +49,23 @@ func (m *MockUserRepo) GetUsers(ctx context.Context, limit rune) ([]storage.User
 
 func (m *MockProducer) PublishUser(user entity.User) error {
 	args := m.Called(user)
-	return args.Error(1)
+	return args.Error(0)
 }
 
 func TestUserService_CreateUser(t *testing.T) {
-	mockRepo := new(MockUserRepo)
-	mockProducer := new(MockProducer)
-	service := userservice.NewUserService(mockRepo, mockProducer)
-
 	user := entity.User{
 		ID:   1,
 		Name: "John Doe",
 		Age:  30,
 	}
 
+	mockRepo := new(MockUserRepo)
 	mockRepo.On("CreateUser", mock.Anything, user.EntityToModel()).Return(int64(1), nil)
+
+	mockProducer := new(MockProducer)
+	mockProducer.On("PublishUser", user).Return(nil)
+
+	service := userservice.NewUserService(mockRepo, mockProducer)
 
 	id, err := service.CreateUser(context.Background(), user)
 	assert.NoError(t, err)

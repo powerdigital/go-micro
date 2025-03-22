@@ -2,6 +2,7 @@ package producer
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/IBM/sarama"
 	"github.com/cockroachdb/errors"
@@ -24,10 +25,10 @@ func (p *Producer) PublishUser(user entity.User) error {
 		return errors.Wrap(err, "marshal user message")
 	}
 
-	//nolint:exhaustruct,govet
+	//nolint:exhaustruct
 	message := &sarama.ProducerMessage{
 		Topic: p.CreateUserTopic,
-		Key:   sarama.StringEncoder(user.ID),
+		Key:   sarama.StringEncoder(strconv.FormatInt(user.ID, 10)),
 		Value: sarama.StringEncoder(userMsg),
 	}
 

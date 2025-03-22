@@ -1,35 +1,50 @@
 package restv1
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"github.com/rs/zerolog"
 
 	userservice "github.com/powerdigital/go-micro/internal/service/v1/user"
 	"github.com/powerdigital/go-micro/internal/service/v1/user/entity"
 )
 
+const badRequestJSONFormat = "Invalid JSON format"
+
 type RESTHandler struct {
-	userService userservice.UserSrv
+	service  userservice.UserSrv
+	validate *validator.Validate
 }
 
-func NewRESTHandler(userService userservice.UserSrv) *RESTHandler {
+func NewRESTHandler(service userservice.UserSrv, validate *validator.Validate) *RESTHandler {
 	return &RESTHandler{
-		userService: userService,
+		service:  service,
+		validate: validate,
 	}
 }
 
 func (h *RESTHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user entity.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
+		h.handleBadRequestError(r.Context(), w, badRequestJSONFormat)
+		zerolog.Ctx(r.Context()).Err(err).Msgf("validation error: %v", err)
 
 		return
 	}
 
-	id, err := h.userService.CreateUser(r.Context(), user)
+	if err := h.validate.Struct(user); err != nil {
+		h.handleBadRequestError(r.Context(), w, err.Error())
+		zerolog.Ctx(r.Context()).Err(err).Msgf("validation error: %v", err)
+
+		return
+	}
+
+	id, err := h.service.CreateUser(r.Context(), user)
 	if err != nil {
 		http.Error(w, "Failed to create user", http.StatusInternalServerError)
 
@@ -56,7 +71,7 @@ func (h *RESTHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.userService.GetUser(r.Context(), int64(id))
+	user, err := h.service.GetUser(r.Context(), int64(id))
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
 
@@ -82,7 +97,7 @@ func (h *RESTHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := h.userService.GetUsers(r.Context(), rune(limit))
+	users, err := h.service.GetUsers(r.Context(), rune(limit))
 	if err != nil {
 		http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
 
@@ -110,13 +125,20 @@ func (h *RESTHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	var user entity.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
+		h.handleBadRequestError(r.Context(), w, badRequestJSONFormat)
+
+		return
+	}
+
+	if err := h.validate.Struct(user); err != nil {
+		h.handleBadRequestError(r.Context(), w, err.Error())
+		zerolog.Ctx(r.Context()).Err(err).Msgf("validation error: %v", err)
 
 		return
 	}
 
 	user.ID = int64(id)
-	if err := h.userService.UpdateUser(r.Context(), user); err != nil {
+	if err := h.service.UpdateUser(r.Context(), user); err != nil {
 		http.Error(w, "Failed to update user", http.StatusInternalServerError)
 
 		return
@@ -135,11 +157,21 @@ func (h *RESTHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.userService.DeleteUser(r.Context(), int64(id)); err != nil {
+	if err := h.service.DeleteUser(r.Context(), int64(id)); err != nil {
 		http.Error(w, "Failed to delete user", http.StatusInternalServerError)
 
 		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *RESTHandler) handleBadRequestError(ctx context.Context, res http.ResponseWriter, errorMessage string) {
+	res.Header().Add("Content-Type", "application/json")
+	res.WriteHeader(http.StatusBadRequest)
+
+	errResponse := entity.ErrResponse{Error: errorMessage}
+	if err := json.NewEncoder(res).Encode(errResponse); err != nil {
+		zerolog.Ctx(ctx).Err(err).Msg("encode reserve period or date")
+	}
 }
