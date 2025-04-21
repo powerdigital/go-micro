@@ -18,14 +18,14 @@ func (b *Builder) MysqlMigration() (*migrate.Migrate, error) {
 		return nil, errors.Wrap(err, "embed mysql migrations")
 	}
 
-	m, err := migrate.NewWithSourceInstance(migration.EmbedTypeIofs, sourceDriver, b.config.MySQL.URL())
+	migrator, err := migrate.NewWithSourceInstance(migration.EmbedTypeIofs, sourceDriver, b.config.MySQL.URL())
 	if err != nil {
 		return nil, errors.Wrap(err, "apply mysql migrations")
 	}
 
 	b.shutdown.add(func(ctx context.Context) error {
-		return errors.Join(m.Close())
+		return errors.Join(migrator.Close())
 	})
 
-	return m, nil
+	return migrator, nil
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
-	"go.uber.org/multierr"
 
 	"github.com/powerdigital/go-micro/internal/migration"
 )
@@ -25,7 +24,7 @@ func (b *Builder) PostgresMigration() (*migrate.Migrate, error) {
 	}
 
 	b.shutdown.add(func(ctx context.Context) error {
-		return multierr.Append(migrator.Close())
+		return errors.Join(migrator.Close())
 	})
 
 	return migrator, nil
