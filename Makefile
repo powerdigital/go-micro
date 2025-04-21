@@ -23,6 +23,16 @@ up:
 down:
 	docker compose -f .docker/docker-compose.yml down --remove-orphans
 
+migrate-up:
+	go run main.go migrate mysql up; \
+	go run main.go migrate postgres up; \
+	true
+
+migrate-down:
+	go run main.go migrate mysql up; \
+	go run main.go migrate postgres down; \
+	true
+
 lint:
 	golangci-lint run -v
 

@@ -21,6 +21,7 @@ func Run(ctx context.Context, conf config.Config) error {
 		grpcServer(ctx, conf),
 		gqlServer(ctx, conf),
 		kafkaServer(ctx, conf),
+		migrateCmd(ctx, conf),
 	)
 
 	return errors.Wrap(root.ExecuteContext(ctx), "run application")
