@@ -6,8 +6,8 @@ import (
 	"github.com/cockroachdb/errors"
 
 	"github.com/powerdigital/go-micro/internal/service/v1/user/entity"
-	"github.com/powerdigital/go-micro/internal/service/v1/user/producer"
 	"github.com/powerdigital/go-micro/internal/service/v1/user/storage"
+	"github.com/powerdigital/go-micro/pkg/producer"
 )
 
 type UserSrv interface {

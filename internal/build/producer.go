@@ -4,10 +4,10 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/cockroachdb/errors"
 
-	userservice "github.com/powerdigital/go-micro/internal/service/v1/user/producer"
+	"github.com/powerdigital/go-micro/pkg/producer"
 )
 
-func (b *Builder) Producer(brokers []string, topic string) (*userservice.Producer, error) {
+func (b *Builder) Producer(brokers []string, topic string) (*producer.Producer, error) {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 5
@@ -15,13 +15,13 @@ func (b *Builder) Producer(brokers []string, topic string) (*userservice.Produce
 	config.Producer.Idempotent = true
 	config.Net.MaxOpenRequests = 1
 
-	producer, err := sarama.NewSyncProducer(brokers, config)
+	syncProducer, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {
 		return nil, errors.Wrap(err, "producer creating")
 	}
 
-	return &userservice.Producer{
-		SyncProducer:    producer,
+	return &producer.Producer{
+		SyncProducer:    syncProducer,
 		CreateUserTopic: topic,
 	}, nil
 }

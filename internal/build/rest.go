@@ -12,8 +12,14 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog"
 
+	"github.com/powerdigital/go-micro/internal/middleware"
 	"github.com/powerdigital/go-micro/internal/service/v1/user/entity"
 	restv1 "github.com/powerdigital/go-micro/internal/transport/rest/v1"
+)
+
+const (
+	requestTimeout    = 5 * time.Second
+	readHeaderTimeout = 25 * time.Millisecond
 )
 
 func (b *Builder) httpRouter() *mux.Router {
@@ -27,16 +33,20 @@ func (b *Builder) httpRouter() *mux.Router {
 }
 
 func (b *Builder) HTTPServer(ctx context.Context) (*http.Server, error) {
-	const timeout = time.Millisecond * 25
-
 	router := b.httpRouter()
 
 	router.HandleFunc(readinessEndpoint, b.healthcheck.handler)
 
+	router.Use(middleware.RecoveryMiddleware)
+	router.Use(middleware.LoggingMiddleware)
+	router.Use(middleware.SecurityHeadersMiddleware)
+	router.Use(middleware.CORSMiddleware)
+	router.Use(middleware.TimeoutMiddleware(requestTimeout))
+
 	//nolint:exhaustruct
 	server := http.Server{
 		Addr:              b.config.HTTPAddr(),
-		ReadHeaderTimeout: timeout,
+		ReadHeaderTimeout: readHeaderTimeout,
 		Handler:           router,
 		ErrorLog:          log.New(zerolog.Nop(), "", 0),
 		BaseContext: func(net.Listener) context.Context {
