@@ -10,47 +10,9 @@ import (
 	userservice "github.com/powerdigital/go-micro/internal/service/v1/user"
 	"github.com/powerdigital/go-micro/internal/service/v1/user/entity"
 	"github.com/powerdigital/go-micro/internal/service/v1/user/storage"
+	storagemocks "github.com/powerdigital/go-micro/internal/service/v1/user/storage/mocks"
+	producermocks "github.com/powerdigital/go-micro/pkg/producer/mocks"
 )
-
-// MockUserRepo is a mock implementation of storage.UserRepo
-type MockUserRepo struct {
-	mock.Mock
-}
-
-// MockProducer is a mock implementation of storage.UserRepo
-type MockProducer struct {
-	mock.Mock
-}
-
-func (m *MockUserRepo) CreateUser(ctx context.Context, user storage.User) (int64, error) {
-	args := m.Called(ctx, user)
-	return args.Get(0).(int64), args.Error(1)
-}
-
-func (m *MockUserRepo) UpdateUser(ctx context.Context, user storage.User) error {
-	args := m.Called(ctx, user)
-	return args.Error(0)
-}
-
-func (m *MockUserRepo) DeleteUser(ctx context.Context, userID int64) error {
-	args := m.Called(ctx, userID)
-	return args.Error(0)
-}
-
-func (m *MockUserRepo) GetUser(ctx context.Context, userID int64) (*storage.User, error) {
-	args := m.Called(ctx, userID)
-	return args.Get(0).(*storage.User), args.Error(1)
-}
-
-func (m *MockUserRepo) GetUsers(ctx context.Context, limit rune) ([]storage.User, error) {
-	args := m.Called(ctx, limit)
-	return args.Get(0).([]storage.User), args.Error(1)
-}
-
-func (m *MockProducer) PublishUser(user entity.User) error {
-	args := m.Called(user)
-	return args.Error(0)
-}
 
 func TestUserService_CreateUser(t *testing.T) {
 	user := entity.User{
@@ -59,10 +21,10 @@ func TestUserService_CreateUser(t *testing.T) {
 		Age:  30,
 	}
 
-	mockRepo := new(MockUserRepo)
+	mockRepo := new(storagemocks.UserRepo)
 	mockRepo.On("CreateUser", mock.Anything, user.EntityToModel()).Return(int64(1), nil)
 
-	mockProducer := new(MockProducer)
+	mockProducer := new(producermocks.UserQueue)
 	mockProducer.On("PublishUser", user).Return(nil)
 
 	service := userservice.NewUserService(mockRepo, mockProducer)
@@ -74,8 +36,8 @@ func TestUserService_CreateUser(t *testing.T) {
 }
 
 func TestUserService_DeleteUser(t *testing.T) {
-	mockRepo := new(MockUserRepo)
-	mockProducer := new(MockProducer)
+	mockRepo := new(storagemocks.UserRepo)
+	mockProducer := new(producermocks.UserQueue)
 	service := userservice.NewUserService(mockRepo, mockProducer)
 
 	mockRepo.On("DeleteUser", mock.Anything, int64(1)).Return(nil)
@@ -86,8 +48,8 @@ func TestUserService_DeleteUser(t *testing.T) {
 }
 
 func TestUserService_GetUser(t *testing.T) {
-	mockRepo := new(MockUserRepo)
-	mockProducer := new(MockProducer)
+	mockRepo := new(storagemocks.UserRepo)
+	mockProducer := new(producermocks.UserQueue)
 	service := userservice.NewUserService(mockRepo, mockProducer)
 
 	User := &storage.User{

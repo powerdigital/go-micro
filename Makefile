@@ -37,12 +37,16 @@ lint:
 	golangci-lint run -v
 
 gen-grpc:
-	${UTILS_COMMAND} buf generate -v --template api/grpc/buf.gen.yaml api/grpc
+	buf generate -v --template api/grpc/buf.gen.yaml api/grpc
 lint-grpc:
-	${UTILS_COMMAND} buf lint api/grpc
+	buf lint api/grpc
 
 gen-graphql:
-	${UTILS_COMMAND} go get github.com/99designs/gqlgen@latest && go run github.com/99designs/gqlgen generate --config api/graphql/gqlgen.yml
+	go get github.com/99designs/gqlgen@latest && go run github.com/99designs/gqlgen generate --config api/graphql/gqlgen.yml
+
+gen-mocks:
+	mockery --dir=internal/service/v1/user/storage --name=UserRepo --output=internal/service/v1/user/storage/mocks --outpkg=mocks
+	mockery --dir=pkg/producer --name=UserQueue --output=pkg/producer/mocks --outpkg=mocks
 
 test:
 	CGO_ENABLED=1 go test -tags mock,integration -race -cover ./...
