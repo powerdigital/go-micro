@@ -8,6 +8,7 @@ require (
 	github.com/99designs/gqlgen v0.17.66
 	github.com/IBM/sarama v1.45.0
 	github.com/archdx/zerolog-sentry v1.8.4
+	github.com/brianvoe/gofakeit v2.2.0+incompatible
 	github.com/cockroachdb/errors v1.11.3
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/go-sql-driver/mysql v1.8.1
@@ -19,12 +20,10 @@ require (
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.10.0
 	github.com/vektah/gqlparser/v2 v2.5.22
-	go.uber.org/multierr v1.5.0
 	google.golang.org/grpc v1.68.0
 	google.golang.org/protobuf v1.36.5
 )
@@ -72,6 +71,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
